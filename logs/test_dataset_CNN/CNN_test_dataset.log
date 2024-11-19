@@ -1,0 +1,21 @@
+2024-11-19 20:37:42,088 - MODEL PARAMETERS
+2024-11-19 20:37:42,088 - batch_size: 128
+2024-11-19 20:37:42,088 - num_epochs: 100
+2024-11-19 20:37:42,088 - input_image_size: 32
+2024-11-19 20:37:42,088 - optimizer: AdamW
+2024-11-19 20:37:42,088 - lr: 0.0001
+2024-11-19 20:37:42,089 - weight_decay: 0
+2024-11-19 20:37:42,089 - scheduler: CosineAnnealingLR
+2024-11-19 20:37:42,089 - scheduler_t_max: 50
+2024-11-19 20:37:42,089 - scheduler_eta_min: 0.0001
+2024-11-19 20:37:42,089 - loss_fn: CrossEntropyLoss
+2024-11-19 20:37:42,089 - seed: 42
+2024-11-19 20:37:42,089 - num_workers: -1
+2024-11-19 20:37:42,089 - datasource: test_dataset
+2024-11-19 20:37:42,089 - model_name: CNN
+2024-11-19 20:37:42,089 - model_basename: model_
+2024-11-19 20:37:42,089 - preload: latest
+2024-11-19 20:37:42,089 - dataset_path: data/test_data
+2024-11-19 20:37:42,089 - device: cuda:0
+2024-11-19 20:38:18,725 - Epoch 0 - Avg Train Loss: 0.9641
+2024-11-19 20:38:23,518 - Epoch 0 - Avg Test Loss: 0.7773

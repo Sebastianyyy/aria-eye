@@ -21,20 +21,20 @@ import logging
 # Validation function to evaluate the model's performance on the test set
 def validate(model, test_loader, loss_fn, device, epoch):
     model.eval()  # Set model to evaluation mode
-    total_loss = 0.0  # Initialize total loss accumulator
+    total_loss = 0.0 
 
     with torch.no_grad():  # Disable gradient calculation during validation
         # Create a progress bar for the validation loop using tqdm
         batch_iterator = tqdm(test_loader, desc=f"Validating Epoch {epoch:02d}", leave=False)
         
         for X, y in batch_iterator:
-            X = X.to(device)  # Move input data to the device
-            y = y.to(device)  # Move target labels to the device
+            X = X.to(device)  
+            y = y.to(device)  
 
-            y_hat = model(X)  # Perform forward pass
+            y_hat = model(X)  
 
-            loss = loss_fn(y_hat, y)  # Calculate loss
-            total_loss += loss.item()  # Accumulate total loss
+            loss = loss_fn(y_hat, y)  
+            total_loss += loss.item()  
             
             # Update the progress bar with the current batch loss
             batch_iterator.set_postfix({"loss": f"{loss.item():6.3f}"})
@@ -154,15 +154,15 @@ def training_loop(config):
         model.train()  # Set model to training mode
         batch_iterator = tqdm(train_loader, desc=f"Processing Epoch {epoch:02d}")  # Progress bar for training
         
-        total_loss = 0.0  # Initialize total loss for the epoch
+        total_loss = 0.0 
         for step, (X, y) in enumerate(batch_iterator):
-            X = X.to(device)  # Move input data to the device
-            y = y.to(device)  # Move target labels to the device
+            X = X.to(device)
+            y = y.to(device) 
 
-            y_hat = model(X)  # Forward pass
+            y_hat = model(X) 
 
-            loss = loss_fn(y_hat, y)  # Calculate loss
-            total_loss += loss.item()  # Accumulate loss for the epoch
+            loss = loss_fn(y_hat, y)  
+            total_loss += loss.item() 
             batch_iterator.set_postfix({"loss": f"{loss.item():6.3f}"})  # Update progress bar with current loss
 
             # Backpropagation and optimizer step

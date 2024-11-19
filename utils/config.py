@@ -64,9 +64,20 @@ def get_transformations(config):
     
     return train_transform, test_transform
 
-
 def get_model_folder_path(config):
+    """
+    Generate the folder path for saving model logs.
+
+    Args:
+        config (dict): Configuration dictionary containing 'datasource' 
+                    and 'model_name' keys.
+
+    Returns:
+        str: A string representing the path to the model folder.
+    """
+    # Create a folder path using datasource and model_name from the config dictionary
     return f"logs/{config['datasource']}_{config['model_name']}"
+
 
 
 def get_weights_file_path(config, epoch: str):
