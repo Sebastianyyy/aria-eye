@@ -1,0 +1,51 @@
+2024-11-20 12:01:55,701 - MODEL PARAMETERS
+2024-11-20 12:01:55,701 - batch_size: 128
+2024-11-20 12:01:55,701 - num_epochs: 100
+2024-11-20 12:01:55,701 - input_image_size: 32
+2024-11-20 12:01:55,701 - optimizer: AdamW
+2024-11-20 12:01:55,701 - lr: 0.0001
+2024-11-20 12:01:55,701 - weight_decay: 0.01
+2024-11-20 12:01:55,701 - scheduler: CosineAnnealingLR
+2024-11-20 12:01:55,701 - scheduler_t_max: 50
+2024-11-20 12:01:55,701 - scheduler_eta_min: 0.0001
+2024-11-20 12:01:55,701 - loss_fn: CrossEntropyLoss
+2024-11-20 12:01:55,701 - seed: 42
+2024-11-20 12:01:55,701 - num_workers: -1
+2024-11-20 12:01:55,702 - datasource: test_dataset
+2024-11-20 12:01:55,702 - model_name: CNN
+2024-11-20 12:01:55,702 - model_basename: model_
+2024-11-20 12:01:55,702 - preload: latest
+2024-11-20 12:01:55,702 - dataset_path: data/test_data
+2024-11-20 12:01:55,702 - device: cuda:0
+2024-11-20 12:01:55,702 - Train Images Transformations
+2024-11-20 12:01:55,702 - Train transform 1: Resize(size=(32, 32), interpolation=bilinear, max_size=None, antialias=warn)
+2024-11-20 12:01:55,702 - Train transform 2: RandomRotation(degrees=[-45.0, 45.0], interpolation=nearest, expand=False, fill=0)
+2024-11-20 12:01:55,702 - Train transform 3: RandomHorizontalFlip(p=0.5)
+2024-11-20 12:01:55,702 - Train transform 4: RandomVerticalFlip(p=0.05)
+2024-11-20 12:01:55,703 - Train transform 5: ColorJitter(brightness=(0.8, 1.2), contrast=(0.8, 1.2), saturation=(0.8, 1.2), hue=None)
+2024-11-20 12:01:55,703 - Train transform 6: RandomGrayscale(p=0.33)
+2024-11-20 12:01:55,703 - Train transform 7: ToTensor()
+2024-11-20 12:01:55,703 - Train transform 8: Normalize(mean=[0.5, 0.5, 0.5], std=[0.25, 0.25, 0.25])
+2024-11-20 12:01:55,703 - Test Images Transformations
+2024-11-20 12:01:55,703 - Test transform 1: Resize(size=(32, 32), interpolation=bilinear, max_size=None, antialias=warn)
+2024-11-20 12:01:55,703 - Test transform 2: ToTensor()
+2024-11-20 12:01:55,703 - Test transform 3: Normalize(mean=[0.5, 0.5, 0.5], std=[0.25, 0.25, 0.25])
+2024-11-20 12:02:17,643 - Epoch 0 - Avg Train Loss: 0.9217
+2024-11-20 12:02:20,345 - Epoch 0 - Avg Test Loss: 0.7807
+2024-11-20 12:02:20,393 - Saving model logs\test_dataset_CNN\model_000.pt
+2024-11-20 12:02:42,517 - Epoch 1 - Avg Train Loss: 0.7874
+2024-11-20 12:02:45,360 - Epoch 1 - Avg Test Loss: 0.7883
+2024-11-20 12:02:45,400 - Saving model logs\test_dataset_CNN\model_001.pt
+2024-11-20 12:03:06,502 - Epoch 2 - Avg Train Loss: 0.7562
+2024-11-20 12:03:09,342 - Epoch 2 - Avg Test Loss: 0.6718
+2024-11-20 12:03:09,385 - Saving model logs\test_dataset_CNN\model_002.pt
+2024-11-20 12:03:30,249 - Epoch 3 - Avg Train Loss: 0.7386
+2024-11-20 12:03:33,089 - Epoch 3 - Avg Test Loss: 0.6501
+2024-11-20 12:03:33,132 - Saving model logs\test_dataset_CNN\model_003.pt
+2024-11-20 12:03:50,735 - Preloading model logs\test_dataset_CNN\model_002.pt
+2024-11-20 12:04:11,488 - Epoch 3 - Avg Train Loss: 0.7289
+2024-11-20 12:04:14,140 - Epoch 3 - Avg Test Loss: 0.6657
+2024-11-20 12:04:14,218 - Saving model logs\test_dataset_CNN\model_003.pt
+2024-11-20 12:04:35,432 - Epoch 4 - Avg Train Loss: 0.7134
+2024-11-20 12:04:38,128 - Epoch 4 - Avg Test Loss: 0.6932
+2024-11-20 12:04:38,190 - Saving model logs\test_dataset_CNN\model_004.pt

@@ -2,14 +2,13 @@ name: aria_env
 channels:
   - conda-forge
   - pytorch
-  # - nvidia
+  - nvidia
   - defaults
 dependencies:
   - python=3.10
   - pip
   - pytorch=2.1.0
   - torchvision=0.16.0
-  - cpuonly
-  # - pytorch-cuda=11.8
+  - pytorch-cuda=12.1.0
   - pip:
-    - projectaria-tools
+      - projectaria-tools
