@@ -24,6 +24,7 @@ def get_config():
         "num_workers": -1,                          # Number of workers for DataLoader (-1 = use all available CPU cores)
         "datasource": "test_dataset",               # Name of the dataset being used (placeholder until the dataset is ready)
         "model_name": "CNN",                        # Name of the model architecture to use
+        "model_name_log": "CNN_v1",                 # Name of the model log file
         "model_basename": "model_",                 # Base name for saving and loading model weight files
         "preload": "latest",                        # Preload setting to load weights (e.g., "latest", "none", or specific checkpoint)
         "dataset_path": "data/test_data",           # Path to the dataset directory
@@ -70,13 +71,13 @@ def get_model_folder_path(config):
 
     Args:
         config (dict): Configuration dictionary containing 'datasource' 
-                    and 'model_name' keys.
+                    and 'model_name_log' keys.
 
     Returns:
         str: A string representing the path to the model folder.
     """
     # Create a folder path using datasource and model_name from the config dictionary
-    return f"logs/{config['datasource']}_{config['model_name']}"
+    return f"logs/{config['datasource']}_{config['model_name_log']}"
 
 
 

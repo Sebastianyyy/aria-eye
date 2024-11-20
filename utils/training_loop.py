@@ -60,7 +60,7 @@ def training_loop(config):
         
     ###### CREATE LOGGING ######
     log_dir = get_model_folder_path(config)  # Path for storing logs
-    log_filename = f"{config['model_name']}_{config['datasource']}.log"
+    log_filename = f"{config['model_name_log']}_{config['datasource']}.log"
     log_filepath = os.path.join(log_dir, log_filename)
 
     # Check if the log directory exists
