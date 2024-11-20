@@ -8,11 +8,14 @@ import torch
 from torch.utils.data import DataLoader
 import torch.optim as optim
 import torch
+import torch.backends.cudnn as cudnn
 
 from tqdm import tqdm
 import os
 from pathlib import Path
 import importlib
+import random
+import numpy as np
 
 from torch.utils.tensorboard import SummaryWriter
 import logging    
@@ -45,7 +48,16 @@ def validate(model, test_loader, loss_fn, device, epoch):
 
 # Main training loop function
 def training_loop(config):
-    
+    ###### SET SEED TO REPRODUCIBILITY ###### 
+    seed = config["seed"]  # Seed from config
+    torch.manual_seed(seed)
+    random.seed(seed)
+    np.random.seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
+        cudnn.deterministic = True
+        cudnn.benchmark = False  # Disables optimization to ensure reproducibility
+        
     ###### CREATE LOGGING ######
     log_dir = get_model_folder_path(config)  # Path for storing logs
     log_filename = f"{config['model_name']}_{config['datasource']}.log"
@@ -67,6 +79,15 @@ def training_loop(config):
         logging.info("MODEL PARAMETERS")
         for key, value in config.items():
             logging.info(f"{key}: {value}")
+            
+        # Log Transformations
+        train_compose, test_compose = get_transformations(config)
+        logging.info("Train Images Transformations")
+        for i, transform in enumerate(train_compose.transforms):
+            logging.info(f"Train transform {i + 1}: {transform}")
+        logging.info("Test Images Transformations")
+        for i, transform in enumerate(test_compose.transforms):
+            logging.info(f"Test transform {i + 1}: {transform}")
 
         print(f"Logging setup complete. Logs will be stored at {log_filepath}.")
     else:
@@ -117,7 +138,10 @@ def training_loop(config):
     )
 
     # Initialize optimizer and scheduler
-    optimizer = getattr(optim, config["optimizer"])(params=model.parameters(), lr=config["lr"], weight_decay=config["weight_decay"])
+    optimizer = getattr(optim, config["optimizer"])(
+        params=model.parameters(), 
+        lr=config["lr"], 
+        weight_decay=config["weight_decay"])
     
     scheduler = getattr(optim.lr_scheduler, config["scheduler"])(
         optimizer,
@@ -205,6 +229,7 @@ def training_loop(config):
             'optimizer_state_dict': optimizer.state_dict(),
             'global_step': global_step
         }, model_filename)
+        logging.info(f'Saving model {model_filename}')
         
     logging.info("Training finished.")
     writer.close()  # Close the TensorBoard writer

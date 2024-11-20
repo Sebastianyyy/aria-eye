@@ -15,7 +15,7 @@ def get_config():
         "input_image_size": 32,                     # Input image dimensions (square: width = height)
         "optimizer": "AdamW",                       # Type of optimizer to use (e.g., Adam, SGD, AdamW)
         "lr": 10**-4,                               # Learning rate for the optimizer
-        "weight_decay": 0,                          # Regularization term to prevent overfitting
+        "weight_decay": 0.01,                       # Regularization term to prevent overfitting
         "scheduler": "CosineAnnealingLR",           # Type of learning rate scheduler
         "scheduler_t_max": 50,                      # Number of epochs over which to decay the learning rate for scheduler
         "scheduler_eta_min": 0.0001,                # Minimum learning rate value for the scheduler
@@ -25,7 +25,7 @@ def get_config():
         "datasource": "test_dataset",               # Name of the dataset being used (placeholder until the dataset is ready)
         "model_name": "CNN",                        # Name of the model architecture to use
         "model_basename": "model_",                 # Base name for saving and loading model weight files
-        "preload": "latest",                        # Preload setting to load weights (e.g., "latest", "none", or specific checkpoint)
+        "preload": "002",                        # Preload setting to load weights (e.g., "latest", "none", or specific checkpoint)
         "dataset_path": "data/test_data",           # Path to the dataset directory
         "device": "cuda:0",                         # Device to use for training and evaluation ("cuda:<ID>" for GPU, "cpu" for CPU)
     }
