@@ -25,7 +25,7 @@ def get_config():
         "datasource": "test_dataset",               # Name of the dataset being used (placeholder until the dataset is ready)
         "model_name": "CNN",                        # Name of the model architecture to use
         "model_basename": "model_",                 # Base name for saving and loading model weight files
-        "preload": "002",                        # Preload setting to load weights (e.g., "latest", "none", or specific checkpoint)
+        "preload": "latest",                        # Preload setting to load weights (e.g., "latest", "none", or specific checkpoint)
         "dataset_path": "data/test_data",           # Path to the dataset directory
         "device": "cuda:0",                         # Device to use for training and evaluation ("cuda:<ID>" for GPU, "cpu" for CPU)
     }
