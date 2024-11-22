@@ -1,4 +1,4 @@
-from .dataset import SampleDataset
+from .AriaDataset import AriaDataset
 from .config import get_model_folder_path, \
                 get_weights_file_path, \
                 latest_weights_file_path, \
@@ -60,7 +60,7 @@ def training_loop(config):
         
     ###### CREATE LOGGING ######
     log_dir = get_model_folder_path(config)  # Path for storing logs
-    log_filename = f"{config['model_name_log']}_{config['datasource']}.log"
+    log_filename = f"{config['model_name_log']}.log"
     log_filepath = os.path.join(log_dir, log_filename)
 
     # Check if the log directory exists
@@ -116,11 +116,11 @@ def training_loop(config):
     # Load the model dynamically based on the model name
     module_name = f"models.{config['model_name']}" 
     model_module = importlib.import_module(module_name)
-    model = model_module.get_model().to(device)
+    model = model_module.get_model(config).to(device)
     
     # Prepare the dataset for training and testing
-    train_set = SampleDataset(config, train=True)
-    test_set = SampleDataset(config, train=False)
+    train_set = AriaDataset(config, train=True)
+    test_set = AriaDataset(config, train=False)
 
     # DataLoader to load batches of data
     train_loader = DataLoader(

@@ -18,5 +18,5 @@ class SimpleCNN(nn.Module):
         x = F.relu(self.fc1(x))
         return self.fc2(x)
     
-def get_model(num_classes=10):
+def get_model(config, num_classes=10):
     return SimpleCNN(num_classes=num_classes)

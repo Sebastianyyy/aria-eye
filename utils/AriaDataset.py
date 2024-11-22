@@ -1,4 +1,5 @@
 import os
+import sys
 from PIL import Image
 from torch.utils.data import Dataset
 from projectaria_tools.core.sensor_data import TimeDomain, TimeQueryOptions
@@ -11,30 +12,27 @@ from matplotlib import pyplot as plt
 from projectaria_tools.core import mps
 import torchvision.transforms.v2 as T
 import torch
-
+from .config import get_transformations, get_config
 
 class AriaDataset(Dataset):
-    def __init__(self, root,sample=10,frame_grabber=3):
+    def __init__(self, config, train=True):
         """Dataset for Aria Everyday Activities Dataset
 
         Args:
             root (str): path to folder containing the dataset
+            config (dict): Configuration dictionary containing dataset path and transformations.
             sample (int, optional): Sampling over video . Defaults to 10.
             frame_grabber (int, optional): Number of consecutive frames to grab. Defaults to 3.
         """
-        self.root = root
-        self.all_files = [f"{root}/{f}" for f in os.listdir(root) if f.startswith('loc') ]
+        self.root = config["train_data"] if train else config["test_data"]
+        self.all_files = [f"{self.root}/{f}" for f in os.listdir(self.root) if f.startswith('loc') ]
         self.rgb_stream_id = StreamId("214-1")
-        self.sample=sample
-        self.frame_grabber=frame_grabber-1
-        self.timestamps=[]
-        self.rgb_stream_label="camera-rgb"
-        self.transform=T.Compose([
-            T.ToPILImage(),
-            T.Resize((224,224)),
-            T.ToTensor(),
-            T.Lambda(lambda x: torch.rot90(x,k=-1,dims=(1,2)))
-        ])
+        self.sample = config["sample"]
+        self.frame_grabber = config["frame_grabber"] - 1
+        self.timestamps = []
+        self.rgb_stream_label = "camera-rgb"
+        train_transform, test_transform = get_transformations(config)
+        self.transform = train_transform if train else test_transform
         for file in self.all_files:
             self.timestamps.extend(self._load_video(file))
 
@@ -160,38 +158,3 @@ class AriaDataset(Dataset):
         gaze_projection = rgb_camera_calibration.project(gaze_center_in_camera)
 
         return gaze_projection
-
-
-            
-            
-            
-if __name__=="__main__":
-    from torch.utils.data import DataLoader
-
-    aria = AriaDataset(f"./data/downloads_test/",sample=10,frame_grabber=2)
-
-    train_dataloader = DataLoader(aria, batch_size=2, shuffle=False,drop_last=True)
-    
-    for batch_idx, (images, eye_gazes) in enumerate(train_dataloader):
-        print(f"Batch {batch_idx + 1}:")
-        # Should be (batch_size, C, H, W)
-        print(f"Images shape: {images.shape}")
-        # Should be (batch_size, num_eye_gazes, 2)
-        print(f"Eye gazes shape: {eye_gazes.shape}")
-        # You can also visualize or process the images and labels here
-        plt.figure(figsize=(6, 6))
-        image_np = images[0, 0, ...].permute(1, 2, 0).numpy()
-        plt.imshow(image_np)
-        plt.scatter(
-            # Scale back the normalized gaze x-coordinates
-            eye_gazes[0,0, 0].numpy() * 224,
-            # Scale back the normalized gaze y-coordinates
-            eye_gazes[0,0, 1].numpy() * 224,
-            c='red', label='Eye Gaze'
-        )
-        plt.title(f"Batch {batch_idx + 1}, Image 1")
-        plt.legend()
-        plt.axis('off')
-        plt.show()
-        print("XD")
-        # break  # Stop after visualizing one batch
