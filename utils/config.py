@@ -55,6 +55,7 @@ def get_transformations(config):
     train_transform = T.Compose([
             T.ToPILImage(),
             T.Resize((224,224)),
+            T.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.3),
             T.ToTensor(),
             T.Lambda(lambda x: torch.rot90(x,k=-1,dims=(1,2)))
         ])
@@ -63,6 +64,7 @@ def get_transformations(config):
             T.ToPILImage(),
             T.Resize((224,224)),
             T.ToTensor(),
+            T.Lambda(lambda x: torch.rot90(x, k=-1, dims=(1, 2)))
         ])
     
     return train_transform, test_transform
