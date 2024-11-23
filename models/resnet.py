@@ -202,19 +202,14 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def forward(self, x):
-
         print(x.size())
         x = self.conv1(x)
-        print(x.size())
 
         x = self.bn1(x)
         x = self.relu(x)
-        print(x.size())
 
-        print('max pool')
         if not self.no_max_pool:
             x = self.maxpool(x)
-        print(x.size())
         
         x = self.layer1(x)
 
