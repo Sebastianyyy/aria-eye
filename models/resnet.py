@@ -226,10 +226,7 @@ class ResNet(nn.Module):
 
         x = x.permute(0, 2, 1) #(batch_size, time, channels)
 
-
-        x = self.time_fc(x) 
-
-        x = self.sigmoid(x)
+        x = self.time_fc(x)  #(batch_size,time,2)
 
         return x
 
