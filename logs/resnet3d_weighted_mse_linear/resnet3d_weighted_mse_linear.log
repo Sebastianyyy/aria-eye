@@ -1,0 +1,58 @@
+2024-12-28 16:16:17,370 - MODEL PARAMETERS
+2024-12-28 16:16:17,370 - batch_size: 16
+2024-12-28 16:16:17,370 - num_epochs: 5
+2024-12-28 16:16:17,370 - input_image_size: 224
+2024-12-28 16:16:17,370 - optimizer: AdamW
+2024-12-28 16:16:17,370 - lr: 0.001
+2024-12-28 16:16:17,370 - weight_decay: 1e-10
+2024-12-28 16:16:17,370 - scheduler: CosineAnnealingLR
+2024-12-28 16:16:17,370 - scheduler_t_max: 600
+2024-12-28 16:16:17,370 - scheduler_eta_min: 0.0001
+2024-12-28 16:16:17,370 - loss_fn: weighted_mse
+2024-12-28 16:16:17,370 - seed: 42
+2024-12-28 16:16:17,371 - num_workers: -1
+2024-12-28 16:16:17,371 - train_data: data/downloads_train
+2024-12-28 16:16:17,371 - test_data: data/downloads_test
+2024-12-28 16:16:17,371 - sample: 10
+2024-12-28 16:16:17,371 - frame_grabber: 3
+2024-12-28 16:16:17,371 - model_name: resnet
+2024-12-28 16:16:17,371 - model_name_log: resnet3d_weighted_mse_linear
+2024-12-28 16:16:17,371 - model_basename: model_
+2024-12-28 16:16:17,371 - preload: latest
+2024-12-28 16:16:17,371 - dataset_path: data/test_data
+2024-12-28 16:16:17,371 - device: cuda:0
+2024-12-28 16:16:17,371 - preprocess_data_path: data/preprocess_data
+2024-12-28 16:16:17,371 - model_depth: 50
+2024-12-28 16:16:17,371 - Train Images Transformations
+2024-12-28 16:16:17,371 - Train transform 1: ToPILImage()
+2024-12-28 16:16:17,372 - Train transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-28 16:16:17,372 - Train transform 3: ToTensor()
+2024-12-28 16:16:17,372 - Train transform 4: Lambda()
+2024-12-28 16:16:17,372 - Test Images Transformations
+2024-12-28 16:16:17,372 - Test transform 1: ToPILImage()
+2024-12-28 16:16:17,372 - Test transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-28 16:16:17,372 - Test transform 3: ToTensor()
+2024-12-28 16:19:09,169 - Epoch 0 - Avg Train Loss: 0.6922
+2024-12-28 16:19:14,703 - Epoch 0 - Avg Test Loss: 0.1700
+2024-12-28 16:19:15,604 - Saving model logs\resnet3d_weighted_mse_linear\model_000.pt
+2024-12-28 16:20:35,478 - Epoch 1 - Avg Train Loss: 0.2254
+2024-12-28 16:20:46,085 - Epoch 1 - Avg Test Loss: 0.0918
+2024-12-28 16:20:47,094 - Saving model logs\resnet3d_weighted_mse_linear\model_001.pt
+2024-12-28 16:22:50,491 - Epoch 2 - Avg Train Loss: 0.1590
+2024-12-28 16:23:07,239 - Epoch 2 - Avg Test Loss: 0.1654
+2024-12-28 16:23:08,237 - Saving model logs\resnet3d_weighted_mse_linear\model_002.pt
+2024-12-28 16:25:40,697 - Epoch 3 - Avg Train Loss: 0.0979
+2024-12-28 16:26:00,131 - Epoch 3 - Avg Test Loss: 0.0866
+2024-12-28 16:26:01,082 - Saving model logs\resnet3d_weighted_mse_linear\model_003.pt
+2024-12-28 16:28:57,011 - Epoch 4 - Avg Train Loss: 0.1051
+2024-12-28 16:29:14,290 - Epoch 4 - Avg Test Loss: 0.1283
+2024-12-28 16:29:15,323 - Saving model logs\resnet3d_weighted_mse_linear\model_004.pt
+2024-12-28 16:29:15,323 - Training finished.
+2024-12-28 16:29:44,989 - Preloading model logs\resnet3d_weighted_mse_linear\model_004.pt
+2024-12-28 16:31:53,660 - Epoch 5 - Avg Train Loss: 0.1023
+2024-12-28 16:32:13,541 - Epoch 5 - Avg Test Loss: 0.1022
+2024-12-28 16:32:14,511 - Saving model logs\resnet3d_weighted_mse_linear\model_005.pt
+2024-12-28 16:35:19,182 - Epoch 6 - Avg Train Loss: 0.0980
+2024-12-28 16:35:38,892 - Epoch 6 - Avg Test Loss: 0.1071
+2024-12-28 16:35:39,918 - Saving model logs\resnet3d_weighted_mse_linear\model_006.pt
+2024-12-28 16:35:39,918 - Training finished.

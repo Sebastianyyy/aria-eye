@@ -162,3 +162,4 @@ cython_debug/
 
 # Add .png to exclude images from git
 *.png
+*.pt

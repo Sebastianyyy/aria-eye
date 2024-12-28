@@ -15,10 +15,11 @@ from tqdm import tqdm
 from .AriaDataset import AriaDataset
 from .config import (get_model_folder_path, get_transformations,
                      get_weights_file_path, latest_weights_file_path)
+from .get_loss_fn import get_loss_fn
 
 
-# Validation function to evaluate the model's performance on the test setSS
-def validate(model, test_loader, loss_fn, device, epoch):
+# Validation function to evaluate the model's performance on the test set
+def validate(model, test_loader, loss_fn, device, epoch, config):
     model.eval()  # Set model to evaluation mode
     total_loss = 0.0
 
@@ -34,7 +35,13 @@ def validate(model, test_loader, loss_fn, device, epoch):
 
             y_hat = model(X)
 
-            loss = loss_fn(y_hat, y)
+            if config["task"] == "classification":
+                y_hat_class = torch.argmax(y_hat, dim=-1)
+                gt_x = torch.div(y_hat_class, config["shape"], rounding_mode="floor")
+                gt_y = y_hat_class % config["shape"]
+                y_hat = torch.stack([gt_x, gt_y], dim=-1) / config["shape"]
+
+            loss = torch.sqrt(loss_fn(y_hat, y))
             total_loss += loss.item()
 
             # Update the progress bar with the current batch loss
@@ -98,8 +105,8 @@ def training_loop(config):
                 format="%(asctime)s - %(message)s",
             )
         print(
-            f"Log directory already exists: {log_dir}. Skipping logging setup, "
-            "but logs will continue."
+            f"Log directory already exists: {log_dir}"
+            "Skipping logging setup, but logs will continue."
         )
 
     ###### DEFINE MODEL PARAMETERS ######
@@ -111,10 +118,10 @@ def training_loop(config):
     # If using CUDA (GPU), print additional device info
     if device == "cuda:0":
         print(f"Device name: {torch.cuda.get_device_name(device.index)}")
-        print(
-            f"Device memory: "
-            f"{torch.cuda.get_device_properties(device.index).total_memory / 1024 ** 3} GB"
+        device_memory = (
+            torch.cuda.get_device_properties(device.index).total_memory / 1024**3
         )
+        print(f"Device memory: {device_memory} GB")
     device = torch.device(device)  # Set device for model
 
     # Load the model dynamically based on the model name
@@ -153,7 +160,8 @@ def training_loop(config):
     )
 
     # Initialize the loss function
-    loss_fn = getattr(torch.nn, config["loss_fn"])()
+    loss_fn = get_loss_fn(config["loss_fn"])()
+    mse_loss_fn = torch.nn.MSELoss()
 
     ###### PRELOAD MODEL IF NEEDED ######
     initial_epoch = 0
@@ -183,6 +191,8 @@ def training_loop(config):
 
     ##### TRAIN MODEL ######
     for epoch in range(initial_epoch, config["num_epochs"]):
+        torch.cuda.empty_cache()  # Free up GPU memory
+        model.train()  # Set model to training mode
         batch_iterator = tqdm(
             train_loader, desc=f"Processing Epoch {epoch:02d}"
         )  # Progress bar for training
@@ -192,16 +202,42 @@ def training_loop(config):
             X = X.to(device)
             y = y.to(device)
 
-            y_hat = (torch.zeros_like(y) + 0.5).to(device)
+            y_hat = model(X)
 
             loss = loss_fn(y_hat, y)
-            total_loss += loss.item()
+
+            if config["task"] == "classification":
+                y_hat_class = torch.argmax(y_hat, dim=-1)
+                gt_x = torch.div(y_hat_class, config["shape"], rounding_mode="floor")
+                gt_y = y_hat_class % config["shape"]
+                y_hat = torch.stack([gt_x, gt_y], dim=-1) / config["shape"]
+
+            rmse_loss = torch.sqrt(mse_loss_fn(y_hat, y))
+
+            total_loss += rmse_loss.item()
             batch_iterator.set_postfix(
-                {"loss": f"{loss.item():6.3f}"}
+                {"loss": f"{rmse_loss.item():6.3f}"}
             )  # Update progress bar with current loss
 
-        logging.info(f"target {y}")
-        logging.info(f"predicted {y_hat}")
+            # Backpropagation and optimizer step
+            loss.backward()
+            optimizer.step()
+            optimizer.zero_grad(set_to_none=True)  # Zero out gradients
+
+            global_step += 1
+
+            # Log histograms of weights and gradients
+            if step % 100 == 0:  # Log every 100 steps (adjust as needed)
+                for name, param in model.named_parameters():
+                    # Log weight histograms
+                    writer.add_histogram(f"Weights/{name}", param, global_step)
+
+                    # Log gradient histograms
+                    if param.grad is not None:
+                        writer.add_histogram(
+                            f"Gradients/{name}", param.grad, global_step
+                        )
+
         scheduler.step()  # Adjust learning rate
 
         # Log the average loss for the epoch
@@ -211,7 +247,7 @@ def training_loop(config):
         print(f"Epoch {epoch} - Avg Train Loss: {avg_loss:.4f}")
 
         # Validation after each epoch
-        val_loss = validate(model, test_loader, loss_fn, device, epoch)
+        val_loss = validate(model, test_loader, mse_loss_fn, device, epoch, config)
         logging.info(f"Epoch {epoch} - Avg Test Loss: {val_loss:.4f}")
         writer.add_scalar("Loss/val", val_loss, epoch)  # Log to TensorBoard
         print(f"Epoch {epoch} - Avg Test Loss: {val_loss:.4f}")

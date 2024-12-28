@@ -200,18 +200,12 @@ class ResNet(nn.Module):
 
     def forward(self, x):
 
-        print(x.size())
         x = self.conv1(x)
-        print(x.size())
-
         x = self.bn1(x)
         x = self.relu(x)
-        print(x.size())
 
-        print("max pool")
         if not self.no_max_pool:
             x = self.maxpool(x)
-        print(x.size())
 
         x = self.layer1(x)
 
@@ -234,23 +228,38 @@ class ResNet(nn.Module):
         return x
 
 
-def get_model(config, **kwargs):
+def get_model(config):
     model_depth = config["model_depth"]
+    num_of_classes = config["num_of_classes"]
     assert model_depth in [10, 18, 34, 50, 101, 152, 200]
 
     if model_depth == 10:
-        model = ResNet(BasicBlock, [1, 1, 1, 1], get_inplanes(), **kwargs)
+        model = ResNet(
+            BasicBlock, [1, 1, 1, 1], get_inplanes(), n_classes=num_of_classes
+        )
     elif model_depth == 18:
-        model = ResNet(BasicBlock, [2, 2, 2, 2], get_inplanes(), **kwargs)
+        model = ResNet(
+            BasicBlock, [2, 2, 2, 2], get_inplanes(), n_classes=num_of_classes
+        )
     elif model_depth == 34:
-        model = ResNet(BasicBlock, [3, 4, 6, 3], get_inplanes(), **kwargs)
+        model = ResNet(
+            BasicBlock, [3, 4, 6, 3], get_inplanes(), n_classes=num_of_classes
+        )
     elif model_depth == 50:
-        model = ResNet(Bottleneck, [3, 4, 6, 3], get_inplanes(), **kwargs)
+        model = ResNet(
+            Bottleneck, [3, 4, 6, 3], get_inplanes(), n_classes=num_of_classes
+        )
     elif model_depth == 101:
-        model = ResNet(Bottleneck, [3, 4, 23, 3], get_inplanes(), **kwargs)
+        model = ResNet(
+            Bottleneck, [3, 4, 23, 3], get_inplanes(), n_classes=num_of_classes
+        )
     elif model_depth == 152:
-        model = ResNet(Bottleneck, [3, 8, 36, 3], get_inplanes(), **kwargs)
+        model = ResNet(
+            Bottleneck, [3, 8, 36, 3], get_inplanes(), n_classes=num_of_classes
+        )
     elif model_depth == 200:
-        model = ResNet(Bottleneck, [3, 24, 36, 3], get_inplanes(), **kwargs)
+        model = ResNet(
+            Bottleneck, [3, 24, 36, 3], get_inplanes(), n_classes=num_of_classes
+        )
 
     return model
