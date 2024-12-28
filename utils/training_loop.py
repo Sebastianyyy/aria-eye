@@ -13,8 +13,12 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 from .AriaDataset import AriaDataset
-from .config import (get_model_folder_path, get_transformations,
-                     get_weights_file_path, latest_weights_file_path)
+from .config import (
+    get_model_folder_path,
+    get_transformations,
+    get_weights_file_path,
+    latest_weights_file_path,
+)
 from .get_loss_fn import get_loss_fn
 
 

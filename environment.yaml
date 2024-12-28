@@ -1,4 +1,4 @@
-name: aria_env
+name: aria
 channels:
   - conda-forge
   - pytorch
@@ -9,6 +9,8 @@ dependencies:
   - pip
   - pytorch=2.1.0
   - torchvision=0.16.0
-  - pytorch-cuda=12.1.0
+  - pytorch-cuda=11.8.0
+  - matplotlib
+  - tensorboard
   - pip:
       - projectaria-tools

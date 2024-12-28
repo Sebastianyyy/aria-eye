@@ -6,8 +6,7 @@ from projectaria_tools.core import mps
 from projectaria_tools.core.sensor_data import TimeDomain, TimeQueryOptions
 from projectaria_tools.core.stream_id import StreamId
 from projectaria_tools.projects.aea import AriaEverydayActivitiesDataProvider
-from projectaria_tools.utils.calibration_utils import \
-    undistort_image_and_calibration
+from projectaria_tools.utils.calibration_utils import undistort_image_and_calibration
 from torch.utils.data import Dataset
 
 from .config import get_transformations
