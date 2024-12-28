@@ -1,8 +1,10 @@
-import torch
-from torch.utils.data import Dataset
-from PIL import Image
 import os
+
+from PIL import Image
+from torch.utils.data import Dataset
+
 from .config import get_transformations
+
 
 class SampleDataset(Dataset):
     """
@@ -11,12 +13,13 @@ class SampleDataset(Dataset):
     Args:
     - config (dict): Configuration dictionary containing dataset path and transformations.
     - train (bool): If True, loads the training dataset. If False, loads the test dataset.
-    
+
     Attributes:
     - image_paths (list): List of image file paths.
     - labels (list): List of corresponding class labels.
     - transform (callable): Transformation function to apply to images.
     """
+
     def __init__(self, config, train=True):
         self.root_dir = config["dataset_path"]
         self.train = train
@@ -50,7 +53,7 @@ class SampleDataset(Dataset):
     def __getitem__(self, idx):
         """
         Retrieves an image and its label at the given index.
-        
+
         Parameters:
         - idx (int): Index of the sample to fetch.
 
@@ -60,12 +63,12 @@ class SampleDataset(Dataset):
         # Load image
         img_path = self.image_paths[idx]
         image = Image.open(img_path).convert("RGB")  # Ensure RGB mode
-        
+
         # Apply transformations if specified
         if self.transform:
             image = self.transform(image)
-        
+
         # Get label
         label = self.labels[idx]
-        
+
         return image, label
