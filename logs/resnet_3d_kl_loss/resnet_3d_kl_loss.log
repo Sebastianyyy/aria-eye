@@ -1,0 +1,71 @@
+2024-12-29 17:55:00,284 - MODEL PARAMETERS
+2024-12-29 17:55:00,284 - task: classification
+2024-12-29 17:55:00,284 - clip: False
+2024-12-29 17:55:00,284 - batch_size: 16
+2024-12-29 17:55:00,284 - num_epochs: 10
+2024-12-29 17:55:00,284 - input_image_size: 224
+2024-12-29 17:55:00,284 - optimizer: AdamW
+2024-12-29 17:55:00,284 - lr: 0.001
+2024-12-29 17:55:00,284 - weight_decay: 0.01
+2024-12-29 17:55:00,284 - scheduler: CosineAnnealingLR
+2024-12-29 17:55:00,284 - scheduler_t_max: 10
+2024-12-29 17:55:00,284 - scheduler_eta_min: 0.0001
+2024-12-29 17:55:00,285 - loss_fn: kl_loss
+2024-12-29 17:55:00,285 - seed: 42
+2024-12-29 17:55:00,285 - num_workers: -1
+2024-12-29 17:55:00,285 - train_data: data/downloads_train
+2024-12-29 17:55:00,285 - test_data: data/downloads_test
+2024-12-29 17:55:00,285 - sample: 10
+2024-12-29 17:55:00,285 - frame_grabber: 3
+2024-12-29 17:55:00,285 - model_name: resnet
+2024-12-29 17:55:00,285 - model_name_log: resnet_3d_kl_loss
+2024-12-29 17:55:00,285 - model_basename: model_
+2024-12-29 17:55:00,285 - preload: latest
+2024-12-29 17:55:00,285 - dataset_path: data/test_data
+2024-12-29 17:55:00,285 - device: cuda:0
+2024-12-29 17:55:00,285 - preprocess_data_path: data/preprocess_data
+2024-12-29 17:55:00,285 - model_depth: 18
+2024-12-29 17:55:00,285 - num_of_classes: 10000
+2024-12-29 17:55:00,286 - shape: 100
+2024-12-29 17:55:00,286 - Train Images Transformations
+2024-12-29 17:55:00,286 - Train transform 1: ToPILImage()
+2024-12-29 17:55:00,286 - Train transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-29 17:55:00,286 - Train transform 3: ColorJitter(brightness=(0.7, 1.3), contrast=(0.7, 1.3), saturation=(0.7, 1.3), hue=(-0.3, 0.3))
+2024-12-29 17:55:00,286 - Train transform 4: ToTensor()
+2024-12-29 17:55:00,286 - Train transform 5: Lambda()
+2024-12-29 17:55:00,286 - Test Images Transformations
+2024-12-29 17:55:00,286 - Test transform 1: ToPILImage()
+2024-12-29 17:55:00,286 - Test transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-29 17:55:00,286 - Test transform 3: ToTensor()
+2024-12-29 17:55:00,286 - Test transform 4: Lambda()
+2024-12-29 17:55:27,391 - Epoch 0 - Avg Train Loss: 0.0834
+2024-12-29 17:55:30,306 - Epoch 0 - Avg Test Loss: 0.0946
+2024-12-29 17:55:31,052 - Saving model logs\resnet_3d_kl_loss\model_000.pt
+2024-12-29 17:56:08,293 - Epoch 1 - Avg Train Loss: 0.0785
+2024-12-29 17:56:12,805 - Epoch 1 - Avg Test Loss: 0.0815
+2024-12-29 17:56:13,584 - Saving model logs\resnet_3d_kl_loss\model_001.pt
+2024-12-29 17:57:15,368 - Epoch 2 - Avg Train Loss: 0.0782
+2024-12-29 17:57:22,121 - Epoch 2 - Avg Test Loss: 0.0887
+2024-12-29 17:57:22,933 - Saving model logs\resnet_3d_kl_loss\model_002.pt
+2024-12-29 17:58:37,135 - Epoch 3 - Avg Train Loss: 0.0784
+2024-12-29 17:58:44,358 - Epoch 3 - Avg Test Loss: 0.0834
+2024-12-29 17:58:45,157 - Saving model logs\resnet_3d_kl_loss\model_003.pt
+2024-12-29 18:00:04,444 - Epoch 4 - Avg Train Loss: 0.0763
+2024-12-29 18:00:12,901 - Epoch 4 - Avg Test Loss: 0.0877
+2024-12-29 18:00:13,789 - Saving model logs\resnet_3d_kl_loss\model_004.pt
+2024-12-29 18:01:41,720 - Epoch 5 - Avg Train Loss: 0.0761
+2024-12-29 18:01:52,230 - Epoch 5 - Avg Test Loss: 0.0820
+2024-12-29 18:01:52,986 - Saving model logs\resnet_3d_kl_loss\model_005.pt
+2024-12-29 18:03:14,631 - Epoch 6 - Avg Train Loss: 0.0745
+2024-12-29 18:03:24,054 - Epoch 6 - Avg Test Loss: 0.0875
+2024-12-29 18:03:24,815 - Saving model logs\resnet_3d_kl_loss\model_006.pt
+2024-12-29 18:04:50,617 - Epoch 7 - Avg Train Loss: 0.0725
+2024-12-29 18:04:59,713 - Epoch 7 - Avg Test Loss: 0.0857
+2024-12-29 18:05:00,534 - Saving model logs\resnet_3d_kl_loss\model_007.pt
+2024-12-29 18:06:34,625 - Epoch 8 - Avg Train Loss: 0.0718
+2024-12-29 18:06:44,423 - Epoch 8 - Avg Test Loss: 0.0878
+2024-12-29 18:06:45,275 - Saving model logs\resnet_3d_kl_loss\model_008.pt
+2024-12-29 18:08:24,948 - Epoch 9 - Avg Train Loss: 0.0704
+2024-12-29 18:08:37,044 - Epoch 9 - Avg Test Loss: 0.0881
+2024-12-29 18:08:37,899 - Saving model logs\resnet_3d_kl_loss\model_009.pt
+2024-12-29 18:08:37,899 - Training finished.

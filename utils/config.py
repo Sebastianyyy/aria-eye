@@ -13,8 +13,8 @@ def get_config():
             optimizer, scheduler, and other hyperparameters.
     """
     return {
-        "task": "regression",  # (regression, classification)
-        "clip": True,  # clip predicted value 0-1 (only test data)
+        "task": "classification",  # (regression, classification)
+        "clip": False,  # clip predicted value 0-1 (only test data)
         "batch_size": 16,  # Number of samples per batch
         "num_epochs": 10,  # Total number of epochs for training
         "input_image_size": 224,  # Input image dimensions (square: width = height)
@@ -24,15 +24,15 @@ def get_config():
         "scheduler": "CosineAnnealingLR",  # Type of learning rate scheduler
         "scheduler_t_max": 10,  # Num of epochs over which to decay the learning rate for scheduler
         "scheduler_eta_min": 0.0001,  # Minimum learning rate value for the scheduler
-        "loss_fn": "mse",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
+        "loss_fn": "kl_loss",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
         "seed": 42,  # Random seed for reproducibility of experiments
         "num_workers": -1,  # Number of workers for DataLoader (-1 = use all available CPU cores)
         "train_data": "data/downloads_train",  # Path to the train dataset
         "test_data": "data/downloads_test",  # Path to the test dataset
         "sample": 10,  # Sampling over video
         "frame_grabber": 3,  # Number of consecutive frames to grab
-        "model_name": "resnet_optical_flow",  # Name of the model architecture to use
-        "model_name_log": "resnet_optical_flow_mse",  # Name of the model log file
+        "model_name": "resnet_2d",  # Name of the model architecture to use
+        "model_name_log": "resnet_2d_kl_loss",  # Name of the model log file
         "model_basename": "model_",  # Base name for saving and loading model weight files
         "preload": "latest",  # Preload setting to load weights: "latest", "none", or specific point
         "dataset_path": "data/test_data",  # Path to the dataset directory
@@ -40,7 +40,7 @@ def get_config():
         "preprocess_data_path": "data/preprocess_data",  # Path to data ready to use in training
         # RESNET PARAMS
         "model_depth": 18,  # Depth of resnet.py
-        "num_of_classes": 2,  # If not classification task set to 2
+        "num_of_classes": 10000,  # If not classification task set to 2
         # CLASSIFICATION
         "shape": 100,  # grid size
     }
