@@ -162,3 +162,10 @@ cython_debug/
 
 # Add .png to exclude images from git
 *.png
+
+# add train and test dataset folder
+data/downloads_test
+data/downloads_train
+
+# add .pt to exclude model weights
+*.pt

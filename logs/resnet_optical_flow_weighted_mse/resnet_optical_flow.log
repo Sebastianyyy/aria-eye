@@ -1,0 +1,70 @@
+2024-12-29 15:54:32,785 - MODEL PARAMETERS
+2024-12-29 15:54:32,785 - task: regression
+2024-12-29 15:54:32,785 - clip: True
+2024-12-29 15:54:32,785 - batch_size: 16
+2024-12-29 15:54:32,785 - num_epochs: 10
+2024-12-29 15:54:32,785 - input_image_size: 224
+2024-12-29 15:54:32,785 - optimizer: AdamW
+2024-12-29 15:54:32,785 - lr: 0.001
+2024-12-29 15:54:32,785 - weight_decay: 0.01
+2024-12-29 15:54:32,786 - scheduler: CosineAnnealingLR
+2024-12-29 15:54:32,786 - scheduler_t_max: 10
+2024-12-29 15:54:32,786 - scheduler_eta_min: 0.0001
+2024-12-29 15:54:32,786 - loss_fn: weighted_mse
+2024-12-29 15:54:32,786 - seed: 42
+2024-12-29 15:54:32,786 - num_workers: -1
+2024-12-29 15:54:32,786 - train_data: data/downloads_train
+2024-12-29 15:54:32,786 - test_data: data/downloads_test
+2024-12-29 15:54:32,786 - sample: 10
+2024-12-29 15:54:32,786 - frame_grabber: 3
+2024-12-29 15:54:32,786 - model_name: resnet_optical_flow
+2024-12-29 15:54:32,786 - model_name_log: resnet_optical_flow
+2024-12-29 15:54:32,786 - model_basename: model_
+2024-12-29 15:54:32,786 - preload: latest
+2024-12-29 15:54:32,786 - dataset_path: data/test_data
+2024-12-29 15:54:32,787 - device: cuda:0
+2024-12-29 15:54:32,787 - preprocess_data_path: data/preprocess_data
+2024-12-29 15:54:32,787 - model_depth: 18
+2024-12-29 15:54:32,787 - num_of_classes: 2
+2024-12-29 15:54:32,787 - shape: 100
+2024-12-29 15:54:32,787 - Train Images Transformations
+2024-12-29 15:54:32,787 - Train transform 1: ToPILImage()
+2024-12-29 15:54:32,787 - Train transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-29 15:54:32,787 - Train transform 3: ToTensor()
+2024-12-29 15:54:32,787 - Train transform 4: Lambda()
+2024-12-29 15:54:32,787 - Test Images Transformations
+2024-12-29 15:54:32,787 - Test transform 1: ToPILImage()
+2024-12-29 15:54:32,787 - Test transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-29 15:54:32,787 - Test transform 3: ToTensor()
+2024-12-29 15:54:32,787 - Test transform 4: Lambda()
+2024-12-29 15:55:16,255 - Epoch 0 - Avg Train Loss: 0.3297
+2024-12-29 15:55:29,116 - Epoch 0 - Avg Test Loss: 0.1220
+2024-12-29 15:55:29,364 - Saving model logs\resnet_optical_flow\model_000.pt
+2024-12-29 15:56:18,794 - Epoch 1 - Avg Train Loss: 0.0948
+2024-12-29 15:56:32,360 - Epoch 1 - Avg Test Loss: 0.1065
+2024-12-29 15:56:32,613 - Saving model logs\resnet_optical_flow\model_001.pt
+2024-12-29 15:57:26,306 - Epoch 2 - Avg Train Loss: 0.0883
+2024-12-29 15:57:40,409 - Epoch 2 - Avg Test Loss: 0.0932
+2024-12-29 15:57:40,663 - Saving model logs\resnet_optical_flow\model_002.pt
+2024-12-29 15:58:35,587 - Epoch 3 - Avg Train Loss: 0.0867
+2024-12-29 15:58:50,138 - Epoch 3 - Avg Test Loss: 0.1178
+2024-12-29 15:58:50,374 - Saving model logs\resnet_optical_flow\model_003.pt
+2024-12-29 15:59:46,367 - Epoch 4 - Avg Train Loss: 0.0842
+2024-12-29 16:00:01,036 - Epoch 4 - Avg Test Loss: 0.0927
+2024-12-29 16:00:01,285 - Saving model logs\resnet_optical_flow\model_004.pt
+2024-12-29 16:00:58,277 - Epoch 5 - Avg Train Loss: 0.0824
+2024-12-29 16:01:13,053 - Epoch 5 - Avg Test Loss: 0.1048
+2024-12-29 16:01:13,298 - Saving model logs\resnet_optical_flow\model_005.pt
+2024-12-29 16:02:10,355 - Epoch 6 - Avg Train Loss: 0.0803
+2024-12-29 16:02:25,160 - Epoch 6 - Avg Test Loss: 0.0862
+2024-12-29 16:02:25,389 - Saving model logs\resnet_optical_flow\model_006.pt
+2024-12-29 16:03:22,968 - Epoch 7 - Avg Train Loss: 0.0799
+2024-12-29 16:03:37,607 - Epoch 7 - Avg Test Loss: 0.0924
+2024-12-29 16:03:37,889 - Saving model logs\resnet_optical_flow\model_007.pt
+2024-12-29 16:04:36,021 - Epoch 8 - Avg Train Loss: 0.0800
+2024-12-29 16:04:50,786 - Epoch 8 - Avg Test Loss: 0.0956
+2024-12-29 16:04:51,029 - Saving model logs\resnet_optical_flow\model_008.pt
+2024-12-29 16:05:49,659 - Epoch 9 - Avg Train Loss: 0.0786
+2024-12-29 16:06:04,880 - Epoch 9 - Avg Test Loss: 0.0853
+2024-12-29 16:06:05,132 - Saving model logs\resnet_optical_flow\model_009.pt
+2024-12-29 16:06:05,133 - Training finished.

@@ -1,0 +1,70 @@
+2024-12-29 16:17:29,106 - MODEL PARAMETERS
+2024-12-29 16:17:29,106 - task: regression
+2024-12-29 16:17:29,106 - clip: True
+2024-12-29 16:17:29,107 - batch_size: 16
+2024-12-29 16:17:29,107 - num_epochs: 10
+2024-12-29 16:17:29,107 - input_image_size: 224
+2024-12-29 16:17:29,107 - optimizer: AdamW
+2024-12-29 16:17:29,107 - lr: 0.001
+2024-12-29 16:17:29,107 - weight_decay: 0.01
+2024-12-29 16:17:29,107 - scheduler: CosineAnnealingLR
+2024-12-29 16:17:29,107 - scheduler_t_max: 10
+2024-12-29 16:17:29,107 - scheduler_eta_min: 0.0001
+2024-12-29 16:17:29,107 - loss_fn: mse
+2024-12-29 16:17:29,107 - seed: 42
+2024-12-29 16:17:29,107 - num_workers: -1
+2024-12-29 16:17:29,107 - train_data: data/downloads_train
+2024-12-29 16:17:29,107 - test_data: data/downloads_test
+2024-12-29 16:17:29,107 - sample: 10
+2024-12-29 16:17:29,107 - frame_grabber: 3
+2024-12-29 16:17:29,108 - model_name: resnet_lstm
+2024-12-29 16:17:29,108 - model_name_log: resnet_lstm_mse
+2024-12-29 16:17:29,108 - model_basename: model_
+2024-12-29 16:17:29,108 - preload: latest
+2024-12-29 16:17:29,108 - dataset_path: data/test_data
+2024-12-29 16:17:29,108 - device: cuda:0
+2024-12-29 16:17:29,108 - preprocess_data_path: data/preprocess_data
+2024-12-29 16:17:29,108 - model_depth: 18
+2024-12-29 16:17:29,108 - num_of_classes: 2
+2024-12-29 16:17:29,108 - shape: 100
+2024-12-29 16:17:29,108 - Train Images Transformations
+2024-12-29 16:17:29,108 - Train transform 1: ToPILImage()
+2024-12-29 16:17:29,108 - Train transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-29 16:17:29,108 - Train transform 3: ToTensor()
+2024-12-29 16:17:29,108 - Train transform 4: Lambda()
+2024-12-29 16:17:29,108 - Test Images Transformations
+2024-12-29 16:17:29,108 - Test transform 1: ToPILImage()
+2024-12-29 16:17:29,108 - Test transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-29 16:17:29,108 - Test transform 3: ToTensor()
+2024-12-29 16:17:29,109 - Test transform 4: Lambda()
+2024-12-29 16:17:43,757 - Epoch 0 - Avg Train Loss: 0.0767
+2024-12-29 16:17:45,121 - Epoch 0 - Avg Test Loss: 0.0801
+2024-12-29 16:17:45,344 - Saving model logs\resnet_lstm_mse\model_000.pt
+2024-12-29 16:18:01,232 - Epoch 1 - Avg Train Loss: 0.0751
+2024-12-29 16:18:03,250 - Epoch 1 - Avg Test Loss: 0.0813
+2024-12-29 16:18:03,520 - Saving model logs\resnet_lstm_mse\model_001.pt
+2024-12-29 16:18:34,732 - Epoch 2 - Avg Train Loss: 0.0746
+2024-12-29 16:18:38,228 - Epoch 2 - Avg Test Loss: 0.0798
+2024-12-29 16:18:38,512 - Saving model logs\resnet_lstm_mse\model_002.pt
+2024-12-29 16:19:27,790 - Epoch 3 - Avg Train Loss: 0.0740
+2024-12-29 16:19:32,813 - Epoch 3 - Avg Test Loss: 0.0794
+2024-12-29 16:19:33,084 - Saving model logs\resnet_lstm_mse\model_003.pt
+2024-12-29 16:20:22,497 - Epoch 4 - Avg Train Loss: 0.0731
+2024-12-29 16:20:27,529 - Epoch 4 - Avg Test Loss: 0.0789
+2024-12-29 16:20:27,813 - Saving model logs\resnet_lstm_mse\model_004.pt
+2024-12-29 16:21:17,975 - Epoch 5 - Avg Train Loss: 0.0728
+2024-12-29 16:21:23,037 - Epoch 5 - Avg Test Loss: 0.0796
+2024-12-29 16:21:23,328 - Saving model logs\resnet_lstm_mse\model_005.pt
+2024-12-29 16:22:14,026 - Epoch 6 - Avg Train Loss: 0.0721
+2024-12-29 16:22:19,069 - Epoch 6 - Avg Test Loss: 0.0802
+2024-12-29 16:22:19,360 - Saving model logs\resnet_lstm_mse\model_006.pt
+2024-12-29 16:23:10,019 - Epoch 7 - Avg Train Loss: 0.0714
+2024-12-29 16:23:15,052 - Epoch 7 - Avg Test Loss: 0.0802
+2024-12-29 16:23:15,388 - Saving model logs\resnet_lstm_mse\model_007.pt
+2024-12-29 16:24:05,225 - Epoch 8 - Avg Train Loss: 0.0707
+2024-12-29 16:24:10,270 - Epoch 8 - Avg Test Loss: 0.0785
+2024-12-29 16:24:10,617 - Saving model logs\resnet_lstm_mse\model_008.pt
+2024-12-29 16:25:00,719 - Epoch 9 - Avg Train Loss: 0.0702
+2024-12-29 16:25:05,766 - Epoch 9 - Avg Test Loss: 0.0800
+2024-12-29 16:25:06,064 - Saving model logs\resnet_lstm_mse\model_009.pt
+2024-12-29 16:25:06,064 - Training finished.

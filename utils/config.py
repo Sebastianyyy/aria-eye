@@ -1,44 +1,58 @@
 from pathlib import Path
+
+import torch
 from torchvision import transforms as T
+
 
 def get_config():
     """
     Returns a dictionary containing the configuration for the experiment.
 
     Returns:
-        dict: Configuration parameters including model settings, dataset details, 
+        dict: Configuration parameters including model settings, dataset details,
             optimizer, scheduler, and other hyperparameters.
     """
     return {
-        "batch_size": 128,                          # Number of samples per batch
-        "num_epochs": 100,                          # Total number of epochs for training
-        "input_image_size": 32,                     # Input image dimensions (square: width = height)
-        "optimizer": "AdamW",                       # Type of optimizer to use (e.g., Adam, SGD, AdamW)
-        "lr": 10**-4,                               # Learning rate for the optimizer
-        "weight_decay": 0.01,                       # Regularization term to prevent overfitting
-        "scheduler": "CosineAnnealingLR",           # Type of learning rate scheduler
-        "scheduler_t_max": 50,                      # Number of epochs over which to decay the learning rate for scheduler
-        "scheduler_eta_min": 0.0001,                # Minimum learning rate value for the scheduler
-        "loss_fn": "CrossEntropyLoss",              # Loss function to use (e.g., CrossEntropyLoss, MSELoss)
-        "seed": 42,                                 # Random seed for reproducibility of experiments
-        "num_workers": -1,                          # Number of workers for DataLoader (-1 = use all available CPU cores)
-        "datasource": "test_dataset",               # Name of the dataset being used (placeholder until the dataset is ready)
-        "model_name": "CNN",                        # Name of the model architecture to use
-        "model_name_log": "CNN_v1",                 # Name of the model log file
-        "model_basename": "model_",                 # Base name for saving and loading model weight files
-        "preload": "latest",                        # Preload setting to load weights (e.g., "latest", "none", or specific checkpoint)
-        "dataset_path": "data/test_data",           # Path to the dataset directory
-        "device": "cuda:0",                         # Device to use for training and evaluation ("cuda:<ID>" for GPU, "cpu" for CPU)
+        "task": "classification",  # (regression, classification)
+        "clip": False,  # clip predicted value 0-1 (only test data)
+        "batch_size": 16,  # Number of samples per batch
+        "num_epochs": 10,  # Total number of epochs for training
+        "input_image_size": 224,  # Input image dimensions (square: width = height)
+        "optimizer": "AdamW",  # Type of optimizer to use (e.g., Adam, SGD, AdamW)
+        "lr": 0.001,  # Learning rate for the optimizer
+        "weight_decay": 0.01,  # Regularization term to prevent overfitting
+        "scheduler": "CosineAnnealingLR",  # Type of learning rate scheduler
+        "scheduler_t_max": 10,  # Num of epochs over which to decay the learning rate for scheduler
+        "scheduler_eta_min": 0.0001,  # Minimum learning rate value for the scheduler
+        "loss_fn": "kl_loss",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
+        "seed": 42,  # Random seed for reproducibility of experiments
+        "num_workers": -1,  # Number of workers for DataLoader (-1 = use all available CPU cores)
+        "train_data": "data/downloads_train",  # Path to the train dataset
+        "test_data": "data/downloads_test",  # Path to the test dataset
+        "sample": 10,  # Sampling over video
+        "frame_grabber": 3,  # Number of consecutive frames to grab
+        "model_name": "resnet_2d",  # Name of the model architecture to use
+        "model_name_log": "resnet_2d_kl_loss",  # Name of the model log file
+        "model_basename": "model_",  # Base name for saving and loading model weight files
+        "preload": "latest",  # Preload setting to load weights: "latest", "none", or specific point
+        "dataset_path": "data/test_data",  # Path to the dataset directory
+        "device": "cuda:0",  # Device to use for training and evaluation (cuda:0 or cpu)
+        "preprocess_data_path": "data/preprocess_data",  # Path to data ready to use in training
+        # RESNET PARAMS
+        "model_depth": 18,  # Depth of resnet.py
+        "num_of_classes": 10000,  # If not classification task set to 2
+        # CLASSIFICATION
+        "shape": 100,  # grid size
     }
-    
-    
+
+
 def get_transformations(config):
     """
     Generates data transformations for training and testing datasets.
-    
+
     Parameters:
-    - config (dict): A dictionary containing configuration values, 
-        specifically the key 'input_image_size' which defines the target size 
+    - config (dict): A dictionary containing configuration values,
+        specifically the key 'input_image_size' which defines the target size
         for resizing images.
 
     Returns:
@@ -46,39 +60,41 @@ def get_transformations(config):
         1. train_transform: Transformations to apply to training images.
         2. test_transform: Transformations to apply to testing images.
     """
-    train_transform = T.Compose([
-        T.Resize(size=(config["input_image_size"], config["input_image_size"])),
-        T.RandomRotation(degrees=45),
-        T.RandomHorizontalFlip(p=0.5),
-        T.RandomVerticalFlip(p=0.05),
-        T.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
-        T.RandomGrayscale(p=0.33),
-        T.ToTensor(),
-        T.Normalize(mean=[0.5, 0.5, 0.5], std=[0.25, 0.25, 0.25])
-    ])
+    train_transform = T.Compose(
+        [
+            T.ToPILImage(),
+            T.Resize((224, 224)),
+            T.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.3),
+            T.ToTensor(),
+            T.Lambda(lambda x: torch.rot90(x, k=-1, dims=(1, 2))),
+        ]
+    )
 
-    test_transform = T.Compose([
-        T.Resize(size=(config["input_image_size"], config["input_image_size"])),
-        T.ToTensor(),
-        T.Normalize(mean=[0.5, 0.5, 0.5], std=[0.25, 0.25, 0.25])
-    ])
-    
+    test_transform = T.Compose(
+        [
+            T.ToPILImage(),
+            T.Resize((224, 224)),
+            T.ToTensor(),
+            T.Lambda(lambda x: torch.rot90(x, k=-1, dims=(1, 2))),
+        ]
+    )
+
     return train_transform, test_transform
+
 
 def get_model_folder_path(config):
     """
     Generate the folder path for saving model logs.
 
     Args:
-        config (dict): Configuration dictionary containing 'datasource' 
+        config (dict): Configuration dictionary containing 'datasource'
                     and 'model_name_log' keys.
 
     Returns:
         str: A string representing the path to the model folder.
     """
-    # Create a folder path using datasource and model_name from the config dictionary
-    return f"logs/{config['datasource']}_{config['model_name_log']}"
-
+    # Create a folder path using logs and model_name from the config dictionary
+    return f"logs/{config['model_name_log']}"
 
 
 def get_weights_file_path(config, epoch: str):
@@ -92,12 +108,12 @@ def get_weights_file_path(config, epoch: str):
     Returns:
         str: Full path to the weights file for the specified epoch.
     """
-    # Path to the model folder based on the datasource and model name
+    # Path to the model folder based on the log model name
     model_folder = get_model_folder_path(config)
     # Filename for the weights file, using the base name and epoch identifier
     model_filename = f"{config['model_basename']}{epoch}.pt"
     # Combine folder and filename to create the full path
-    return str(Path('.') / model_folder / model_filename)
+    return str(Path(".") / model_folder / model_filename)
 
 
 def latest_weights_file_path(config):
@@ -110,7 +126,7 @@ def latest_weights_file_path(config):
     Returns:
         str or None: Path to the most recent weights file. Returns None if no file is found.
     """
-    # Path to the model folder based on the datasource and model name
+    # Path to the model folder based on the log model name
     model_folder = get_model_folder_path(config)
     # Glob pattern to match weight files in the folder
     model_filename = f"{config['model_basename']}*"

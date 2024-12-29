@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#TRAIN SET
+#TEST SET
 TEST_FILE="./test_set.txt"
 
 CONFIG_PATH="./aria_everyday_activities_dataset_download_urls.json"
