@@ -14,3 +14,4 @@ dependencies:
   - tensorboard
   - pip:
       - projectaria-tools
+      - opencv-python=4.10.0.84

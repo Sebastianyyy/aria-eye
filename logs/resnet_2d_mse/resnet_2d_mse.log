@@ -1,0 +1,71 @@
+2024-12-29 16:54:38,101 - MODEL PARAMETERS
+2024-12-29 16:54:38,102 - task: regression
+2024-12-29 16:54:38,102 - clip: True
+2024-12-29 16:54:38,102 - batch_size: 16
+2024-12-29 16:54:38,102 - num_epochs: 10
+2024-12-29 16:54:38,102 - input_image_size: 224
+2024-12-29 16:54:38,102 - optimizer: AdamW
+2024-12-29 16:54:38,102 - lr: 0.001
+2024-12-29 16:54:38,102 - weight_decay: 0.01
+2024-12-29 16:54:38,102 - scheduler: CosineAnnealingLR
+2024-12-29 16:54:38,102 - scheduler_t_max: 10
+2024-12-29 16:54:38,102 - scheduler_eta_min: 0.0001
+2024-12-29 16:54:38,102 - loss_fn: mse
+2024-12-29 16:54:38,102 - seed: 42
+2024-12-29 16:54:38,102 - num_workers: -1
+2024-12-29 16:54:38,103 - train_data: data/downloads_train
+2024-12-29 16:54:38,103 - test_data: data/downloads_test
+2024-12-29 16:54:38,103 - sample: 10
+2024-12-29 16:54:38,103 - frame_grabber: 3
+2024-12-29 16:54:38,103 - model_name: resnet_2d
+2024-12-29 16:54:38,103 - model_name_log: resnet_2d_mse
+2024-12-29 16:54:38,103 - model_basename: model_
+2024-12-29 16:54:38,103 - preload: latest
+2024-12-29 16:54:38,103 - dataset_path: data/test_data
+2024-12-29 16:54:38,103 - device: cuda:0
+2024-12-29 16:54:38,103 - preprocess_data_path: data/preprocess_data
+2024-12-29 16:54:38,103 - model_depth: 18
+2024-12-29 16:54:38,103 - num_of_classes: 2
+2024-12-29 16:54:38,103 - shape: 100
+2024-12-29 16:54:38,103 - Train Images Transformations
+2024-12-29 16:54:38,103 - Train transform 1: ToPILImage()
+2024-12-29 16:54:38,103 - Train transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-29 16:54:38,104 - Train transform 3: ColorJitter(brightness=(0.7, 1.3), contrast=(0.7, 1.3), saturation=(0.7, 1.3), hue=(-0.3, 0.3))
+2024-12-29 16:54:38,104 - Train transform 4: ToTensor()
+2024-12-29 16:54:38,104 - Train transform 5: Lambda()
+2024-12-29 16:54:38,104 - Test Images Transformations
+2024-12-29 16:54:38,104 - Test transform 1: ToPILImage()
+2024-12-29 16:54:38,104 - Test transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2024-12-29 16:54:38,104 - Test transform 3: ToTensor()
+2024-12-29 16:54:38,104 - Test transform 4: Lambda()
+2024-12-29 16:54:53,577 - Epoch 0 - Avg Train Loss: 0.2265
+2024-12-29 16:54:55,150 - Epoch 0 - Avg Test Loss: 0.0945
+2024-12-29 16:54:55,354 - Saving model logs\resnet_2d_mse\model_000.pt
+2024-12-29 16:55:13,241 - Epoch 1 - Avg Train Loss: 0.0911
+2024-12-29 16:55:16,927 - Epoch 1 - Avg Test Loss: 0.0944
+2024-12-29 16:55:17,175 - Saving model logs\resnet_2d_mse\model_001.pt
+2024-12-29 16:56:03,223 - Epoch 2 - Avg Train Loss: 0.0807
+2024-12-29 16:56:08,094 - Epoch 2 - Avg Test Loss: 0.0914
+2024-12-29 16:56:08,329 - Saving model logs\resnet_2d_mse\model_002.pt
+2024-12-29 16:56:56,147 - Epoch 3 - Avg Train Loss: 0.0758
+2024-12-29 16:57:01,106 - Epoch 3 - Avg Test Loss: 0.0827
+2024-12-29 16:57:01,356 - Saving model logs\resnet_2d_mse\model_003.pt
+2024-12-29 16:57:50,744 - Epoch 4 - Avg Train Loss: 0.0730
+2024-12-29 16:57:55,700 - Epoch 4 - Avg Test Loss: 0.0836
+2024-12-29 16:57:55,983 - Saving model logs\resnet_2d_mse\model_004.pt
+2024-12-29 16:58:45,796 - Epoch 5 - Avg Train Loss: 0.0727
+2024-12-29 16:58:50,916 - Epoch 5 - Avg Test Loss: 0.0893
+2024-12-29 16:58:51,293 - Saving model logs\resnet_2d_mse\model_005.pt
+2024-12-29 16:59:42,614 - Epoch 6 - Avg Train Loss: 0.0701
+2024-12-29 16:59:47,852 - Epoch 6 - Avg Test Loss: 0.0835
+2024-12-29 16:59:48,188 - Saving model logs\resnet_2d_mse\model_006.pt
+2024-12-29 17:00:38,287 - Epoch 7 - Avg Train Loss: 0.0684
+2024-12-29 17:00:43,295 - Epoch 7 - Avg Test Loss: 0.0831
+2024-12-29 17:00:43,593 - Saving model logs\resnet_2d_mse\model_007.pt
+2024-12-29 17:01:33,654 - Epoch 8 - Avg Train Loss: 0.0666
+2024-12-29 17:01:38,671 - Epoch 8 - Avg Test Loss: 0.0840
+2024-12-29 17:01:38,967 - Saving model logs\resnet_2d_mse\model_008.pt
+2024-12-29 17:02:28,771 - Epoch 9 - Avg Train Loss: 0.0661
+2024-12-29 17:02:33,758 - Epoch 9 - Avg Test Loss: 0.0850
+2024-12-29 17:02:34,071 - Saving model logs\resnet_2d_mse\model_009.pt
+2024-12-29 17:02:34,071 - Training finished.

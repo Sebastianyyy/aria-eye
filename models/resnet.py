@@ -223,8 +223,6 @@ class ResNet(nn.Module):
 
         x = self.time_fc(x)
 
-        x = self.sigmoid(x)
-
         return x
 
 

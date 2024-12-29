@@ -13,12 +13,8 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 from .AriaDataset import AriaDataset
-from .config import (
-    get_model_folder_path,
-    get_transformations,
-    get_weights_file_path,
-    latest_weights_file_path,
-)
+from .config import (get_model_folder_path, get_transformations,
+                     get_weights_file_path, latest_weights_file_path)
 from .get_loss_fn import get_loss_fn
 
 
@@ -44,6 +40,9 @@ def validate(model, test_loader, loss_fn, device, epoch, config):
                 gt_x = torch.div(y_hat_class, config["shape"], rounding_mode="floor")
                 gt_y = y_hat_class % config["shape"]
                 y_hat = torch.stack([gt_x, gt_y], dim=-1) / config["shape"]
+
+            if config["clip"]:
+                y_hat = torch.clip(y_hat, 0, 1)
 
             loss = torch.sqrt(loss_fn(y_hat, y))
             total_loss += loss.item()

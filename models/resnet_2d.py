@@ -1,12 +1,12 @@
 import torch
 import torch.nn as nn
-from torchvision.models import resnet50
+from torchvision.models import resnet18
 
 
 class ResNet50Regressor(nn.Module):
     def __init__(self, output_dim=6):
         """
-        ResNet50-based model for regression tasks.
+        ResNet18-based model for regression tasks.
 
         Args:
             pretrained (bool): Whether to initialize the model with pretrained weights.
@@ -14,7 +14,7 @@ class ResNet50Regressor(nn.Module):
         """
         super(ResNet50Regressor, self).__init__()
         # Load ResNet50
-        self.base_model = resnet50()
+        self.base_model = resnet18(pretrained=False)
         # Remove the final classification layer (fc)
         in_features = self.base_model.fc.in_features
         # Replace the classification head with a regression head

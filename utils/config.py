@@ -13,15 +13,16 @@ def get_config():
             optimizer, scheduler, and other hyperparameters.
     """
     return {
-        "task": "regression",  # (regression, classification, autoregressive)
+        "task": "regression",  # (regression, classification)
+        "clip": True,  # clip predicted value 0-1 (only test data)
         "batch_size": 16,  # Number of samples per batch
-        "num_epochs": 5,  # Total number of epochs for training
+        "num_epochs": 10,  # Total number of epochs for training
         "input_image_size": 224,  # Input image dimensions (square: width = height)
         "optimizer": "AdamW",  # Type of optimizer to use (e.g., Adam, SGD, AdamW)
-        "lr": 1e-3,  # Learning rate for the optimizer
-        "weight_decay": 1e-10,  # Regularization term to prevent overfitting
+        "lr": 0.001,  # Learning rate for the optimizer
+        "weight_decay": 0.01,  # Regularization term to prevent overfitting
         "scheduler": "CosineAnnealingLR",  # Type of learning rate scheduler
-        "scheduler_t_max": 600,  # Num of epochs over which to decay the learning rate for scheduler
+        "scheduler_t_max": 10,  # Num of epochs over which to decay the learning rate for scheduler
         "scheduler_eta_min": 0.0001,  # Minimum learning rate value for the scheduler
         "loss_fn": "mse",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
         "seed": 42,  # Random seed for reproducibility of experiments
@@ -30,15 +31,15 @@ def get_config():
         "test_data": "data/downloads_test",  # Path to the test dataset
         "sample": 10,  # Sampling over video
         "frame_grabber": 3,  # Number of consecutive frames to grab
-        "model_name": "resnet_2d",  # Name of the model architecture to use
-        "model_name_log": "resnet2d_mse_linear",  # Name of the model log file
+        "model_name": "resnet_optical_flow",  # Name of the model architecture to use
+        "model_name_log": "resnet_optical_flow_mse",  # Name of the model log file
         "model_basename": "model_",  # Base name for saving and loading model weight files
         "preload": "latest",  # Preload setting to load weights: "latest", "none", or specific point
         "dataset_path": "data/test_data",  # Path to the dataset directory
         "device": "cuda:0",  # Device to use for training and evaluation (cuda:0 or cpu)
         "preprocess_data_path": "data/preprocess_data",  # Path to data ready to use in training
         # RESNET PARAMS
-        "model_depth": 50,  # Depth of resnet.py
+        "model_depth": 18,  # Depth of resnet.py
         "num_of_classes": 2,  # If not classification task set to 2
         # CLASSIFICATION
         "shape": 100,  # grid size
@@ -62,7 +63,7 @@ def get_transformations(config):
     train_transform = T.Compose(
         [
             T.ToPILImage(),
-            T.Resize((224,224)),
+            T.Resize((224, 224)),
             T.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.3),
             T.ToTensor(),
             T.Lambda(lambda x: torch.rot90(x, k=-1, dims=(1, 2))),
@@ -74,9 +75,10 @@ def get_transformations(config):
             T.ToPILImage(),
             T.Resize((224, 224)),
             T.ToTensor(),
-            T.Lambda(lambda x: torch.rot90(x, k=-1, dims=(1, 2)))
-        ])
-    
+            T.Lambda(lambda x: torch.rot90(x, k=-1, dims=(1, 2))),
+        ]
+    )
+
     return train_transform, test_transform
 
 
