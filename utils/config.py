@@ -15,12 +15,12 @@ def get_config():
     return {
         "task": "classification",  # (regression, classification)
         "clip": False,  # clip predicted value 0-1 (only test data)
-        "batch_size": 16,  # Number of samples per batch
+        "batch_size": 64,  # Number of samples per batch
         "num_epochs": 10,  # Total number of epochs for training
         "input_image_size": 224,  # Input image dimensions (square: width = height)
         "optimizer": "AdamW",  # Type of optimizer to use (e.g., Adam, SGD, AdamW)
-        "lr": 0.001,  # Learning rate for the optimizer
-        "weight_decay": 0.01,  # Regularization term to prevent overfitting
+        "lr": 0.00001,  # Learning rate for the optimizer
+        "weight_decay": 0.00001,  # Regularization term to prevent overfitting
         "scheduler": "CosineAnnealingLR",  # Type of learning rate scheduler
         "scheduler_t_max": 10,  # Num of epochs over which to decay the learning rate for scheduler
         "scheduler_eta_min": 0.0001,  # Minimum learning rate value for the scheduler
@@ -43,6 +43,10 @@ def get_config():
         "num_of_classes": 10000,  # If not classification task set to 2
         # CLASSIFICATION
         "shape": 100,  # grid size
+        # "d_model": 32,  # Depth of transformer model
+        # "heads": 4,  # Number of heads in the transformer model
+        # "enc_depth": 2,  # Depth of the encoder in the transformer model
+        # "dec_depth": 2,  # Depth of the decoder in the transformer model
     }
 
 
@@ -66,6 +70,7 @@ def get_transformations(config):
             T.Resize((224, 224)),
             T.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.3, hue=0.3),
             T.ToTensor(),
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             T.Lambda(lambda x: torch.rot90(x, k=-1, dims=(1, 2))),
         ]
     )
@@ -75,6 +80,7 @@ def get_transformations(config):
             T.ToPILImage(),
             T.Resize((224, 224)),
             T.ToTensor(),
+            T.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
             T.Lambda(lambda x: torch.rot90(x, k=-1, dims=(1, 2))),
         ]
     )

@@ -1,0 +1,58 @@
+2025-01-01 20:42:07,085 - MODEL PARAMETERS
+2025-01-01 20:42:07,087 - task: classification
+2025-01-01 20:42:07,087 - clip: False
+2025-01-01 20:42:07,087 - batch_size: 64
+2025-01-01 20:42:07,088 - num_epochs: 10
+2025-01-01 20:42:07,088 - input_image_size: 224
+2025-01-01 20:42:07,088 - optimizer: AdamW
+2025-01-01 20:42:07,089 - lr: 1e-05
+2025-01-01 20:42:07,089 - weight_decay: 1e-05
+2025-01-01 20:42:07,089 - scheduler: CosineAnnealingLR
+2025-01-01 20:42:07,089 - scheduler_t_max: 10
+2025-01-01 20:42:07,090 - scheduler_eta_min: 0.0001
+2025-01-01 20:42:07,090 - loss_fn: cross_entropy_map
+2025-01-01 20:42:07,090 - seed: 42
+2025-01-01 20:42:07,091 - num_workers: -1
+2025-01-01 20:42:07,091 - train_data: data/downloads_train
+2025-01-01 20:42:07,091 - test_data: data/downloads_test
+2025-01-01 20:42:07,091 - sample: 50
+2025-01-01 20:42:07,092 - frame_grabber: 1
+2025-01-01 20:42:07,092 - model_name: cross_view_transformer
+2025-01-01 20:42:07,092 - model_name_log: cross_view_transformer_kl
+2025-01-01 20:42:07,092 - model_basename: model_transformer_
+2025-01-01 20:42:07,093 - preload: latest
+2025-01-01 20:42:07,093 - dataset_path: data/test_data
+2025-01-01 20:42:07,093 - device: cpu
+2025-01-01 20:42:07,093 - preprocess_data_path: data/preprocess_data
+2025-01-01 20:42:07,094 - shape: 8
+2025-01-01 20:42:07,094 - d_model: 32
+2025-01-01 20:42:07,094 - heads: 4
+2025-01-01 20:42:07,095 - enc_depth: 2
+2025-01-01 20:42:07,095 - dec_depth: 2
+2025-01-01 20:42:07,097 - Train Images Transformations
+2025-01-01 20:42:07,098 - Train transform 1: ToPILImage()
+2025-01-01 20:42:07,098 - Train transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2025-01-01 20:42:07,098 - Train transform 3: ColorJitter(brightness=(0.7, 1.3), contrast=(0.7, 1.3), saturation=(0.7, 1.3), hue=(-0.3, 0.3))
+2025-01-01 20:42:07,100 - Train transform 4: ToTensor()
+2025-01-01 20:42:07,100 - Train transform 5: Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+2025-01-01 20:42:07,101 - Train transform 6: Lambda()
+2025-01-01 20:42:07,101 - Test Images Transformations
+2025-01-01 20:42:07,101 - Test transform 1: ToPILImage()
+2025-01-01 20:42:07,101 - Test transform 2: Resize(size=(224, 224), interpolation=bilinear, max_size=None, antialias=warn)
+2025-01-01 20:42:07,102 - Test transform 3: ToTensor()
+2025-01-01 20:42:07,102 - Test transform 4: Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
+2025-01-01 20:42:07,102 - Test transform 5: Lambda()
+2025-01-01 20:48:23,344 - Epoch 0 - Avg Train Loss: 0.0000
+2025-01-01 20:48:25,700 - Epoch 0 - Avg Test Loss: 0.0000
+2025-01-01 20:48:25,968 - Saving model logs\cross_view_transformer_kl\model_transformer_000.pt
+2025-01-01 20:50:13,423 - Preloading model logs\cross_view_transformer_kl\model_transformer_000.pt
+2025-01-01 20:54:21,014 - Preloading model logs\cross_view_transformer_kl\model_transformer_000.pt
+2025-01-01 20:55:36,661 - Epoch 1 - Avg Train Loss: 4.5388
+2025-01-01 20:55:39,067 - Epoch 1 - Avg Test Loss: 4.4180
+2025-01-01 20:55:39,427 - Saving model logs\cross_view_transformer_kl\model_transformer_001.pt
+2025-01-01 20:56:19,959 - Epoch 2 - Avg Train Loss: 4.5267
+2025-01-01 20:56:24,772 - Epoch 2 - Avg Test Loss: 4.4077
+2025-01-01 20:56:25,587 - Saving model logs\cross_view_transformer_kl\model_transformer_002.pt
+2025-01-01 20:57:16,820 - Epoch 3 - Avg Train Loss: 4.5000
+2025-01-01 20:57:19,768 - Epoch 3 - Avg Test Loss: 4.3926
+2025-01-01 20:57:20,123 - Saving model logs\cross_view_transformer_kl\model_transformer_003.pt

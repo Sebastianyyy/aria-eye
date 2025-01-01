@@ -34,8 +34,11 @@ def validate(model, test_loader, loss_fn, device, epoch, config):
             y = y.to(device)
 
             y_hat = model(X)
+            loss = loss_fn(y_hat, y)
+            total_loss += loss.item()
 
             if config["task"] == "classification":
+                y_hat=y_hat.flatten(2)
                 y_hat_class = torch.argmax(y_hat, dim=-1)
                 gt_x = torch.div(y_hat_class, config["shape"], rounding_mode="floor")
                 gt_y = y_hat_class % config["shape"]
@@ -44,8 +47,6 @@ def validate(model, test_loader, loss_fn, device, epoch, config):
             if config["clip"]:
                 y_hat = torch.clip(y_hat, 0, 1)
 
-            loss = torch.sqrt(loss_fn(y_hat, y))
-            total_loss += loss.item()
 
             # Update the progress bar with the current batch loss
             batch_iterator.set_postfix({"loss": f"{loss.item():6.3f}"})
@@ -163,7 +164,7 @@ def training_loop(config):
     )
 
     # Initialize the loss function
-    loss_fn = get_loss_fn(config["loss_fn"])()
+    loss_fn = get_loss_fn(config["loss_fn"])(config)
     mse_loss_fn = torch.nn.MSELoss()
 
     ###### PRELOAD MODEL IF NEEDED ######
@@ -210,16 +211,17 @@ def training_loop(config):
             loss = loss_fn(y_hat, y)
 
             if config["task"] == "classification":
+                y_hat=y_hat.flatten(2)
                 y_hat_class = torch.argmax(y_hat, dim=-1)
                 gt_x = torch.div(y_hat_class, config["shape"], rounding_mode="floor")
                 gt_y = y_hat_class % config["shape"]
                 y_hat = torch.stack([gt_x, gt_y], dim=-1) / config["shape"]
 
-            rmse_loss = torch.sqrt(mse_loss_fn(y_hat, y))
+            # rmse_loss = torch.sqrt(mse_loss_fn(y_hat, y))
 
-            total_loss += rmse_loss.item()
+            total_loss += loss.item()
             batch_iterator.set_postfix(
-                {"loss": f"{rmse_loss.item():6.3f}"}
+                {"loss": f"{loss.item():6.3f}"}
             )  # Update progress bar with current loss
 
             # Backpropagation and optimizer step
@@ -250,7 +252,7 @@ def training_loop(config):
         print(f"Epoch {epoch} - Avg Train Loss: {avg_loss:.4f}")
 
         # Validation after each epoch
-        val_loss = validate(model, test_loader, mse_loss_fn, device, epoch, config)
+        val_loss = validate(model, test_loader, loss_fn, device, epoch, config)
         logging.info(f"Epoch {epoch} - Avg Test Loss: {val_loss:.4f}")
         writer.add_scalar("Loss/val", val_loss, epoch)  # Log to TensorBoard
         print(f"Epoch {epoch} - Avg Test Loss: {val_loss:.4f}")
