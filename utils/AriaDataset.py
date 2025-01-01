@@ -87,7 +87,7 @@ class AriaDataset(Dataset):
                     image = self.transform(image)
                     images.append(image)
 
-                images_tensor = torch.stack(images)
+                images_tensor = torch.stack(images) if len(images) > 1 else torch.tensor(images[0])
                 eye_gazes_tensor = torch.tensor(eye_gazes, dtype=torch.float32)
                 data.append((images_tensor, eye_gazes_tensor))
 
