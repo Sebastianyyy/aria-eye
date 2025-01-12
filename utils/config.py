@@ -16,7 +16,7 @@ def get_config():
         "task": "classification",  # (regression, classification)
         "clip": False,  # clip predicted value 0-1 (only test data)
         "batch_size": 64,  # Number of samples per batch
-        "num_epochs": 10,  # Total number of epochs for training
+        "num_epochs": 5,  # Total number of epochs for training
         "input_image_size": 224,  # Input image dimensions (square: width = height)
         "optimizer": "AdamW",  # Type of optimizer to use (e.g., Adam, SGD, AdamW)
         "lr": 0.00001,  # Learning rate for the optimizer
@@ -31,8 +31,8 @@ def get_config():
         "test_data": "data/downloads_test",  # Path to the test dataset
         "sample": 10,  # Sampling over video
         "frame_grabber": 3,  # Number of consecutive frames to grab
-        "model_name": "resnet_2d",  # Name of the model architecture to use
-        "model_name_log": "resnet_2d_kl_loss",  # Name of the model log file
+        "model_name": "resnet",  # Name of the model architecture to use
+        "model_name_log": "resnet",  # Name of the model log file
         "model_basename": "model_",  # Base name for saving and loading model weight files
         "preload": "latest",  # Preload setting to load weights: "latest", "none", or specific point
         "dataset_path": "data/test_data",  # Path to the dataset directory
@@ -144,3 +144,44 @@ def latest_weights_file_path(config):
     # Sort the files and return the latest one
     weights_files.sort()
     return str(weights_files[-1])
+
+def get_config_validation():
+    """
+    Returns a dictionary containing the configuration for the validation process.
+
+    Returns:
+        dict: Configuration parameters including model settings and dataset details.
+    """
+    return {
+        # Task and data handling
+        "task": "classification",  # Task type (classification or regression)
+        "clip": False,  # Clip predicted values between 0 and 1 (only for validation)
+        "batch_size": 64,  # Number of samples per batch
+        "input_image_size": 224,  # Input image dimensions
+        "seed": 42,  # Random seed for reproducibility
+        "num_workers": -1,  # Number of workers for DataLoader (-1 = use all available CPU cores)
+        "test_data": "data/downloads_test",  # Path to the validation dataset
+        "dataset_path": "data/test_data",  # Path to the dataset directory
+        "preprocess_data_path": "data/preprocess_data",  # Path to preprocessed data
+        "sample": 10,  # Sampling over video
+        "frame_grabber": 3,  # Number of consecutive frames to grab
+
+        
+        # Model parameters
+        "model_name": "resnet",  # Name of the model architecture
+        "model_name_log": "resnet",  # Name for log files
+        "model_basename": "model_",  # Base name for saving/loading model weights
+        "preload": "latest",  # Preload option for loading weights
+        "device": "cuda:0",  # Device to use for validation (cuda or cpu)
+        "model_depth": 18,  # Depth of ResNet model
+        "num_of_classes": 10000,  # Number of output classes
+        "loss_fn": "kl_loss",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
+
+      
+        # Classification-specific parameters
+        "shape": 100,  # Grid size for classification task
+        
+        # Visualization-specific parameters (for utils.visualize functions)
+        "visualize_soft": True,  # Enable or disable soft visualization
+        "visualize_hard": False,  # Enable or disable hard visualization
+    }
