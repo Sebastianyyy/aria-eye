@@ -8,6 +8,18 @@ def get_loss_fn(loss_fn):
         return nn.MSELoss
     if loss_fn == "weighted_mse":
         return EdgeWeightedMSELoss
+    if loss_fn == "rmse":
+        return nn.LambdaLoss(lambda pred, target: torch.sqrt(nn.MSELoss()(pred, target)))
+    if loss_fn == "mae":
+        return nn.L1Loss
+    if loss_fn == "f1":
+        return F1ScoreLoss
+    if loss_fn == "precision":
+        return PrecisionLoss
+    if loss_fn == "recall":
+        return RecallLoss
+    if loss_fn == "accuracy":
+        return AccuracyLoss
     if loss_fn == "kl_loss":
         return KLDivergenceLoss
     if loss_fn == "cross_entropy_map":
@@ -94,6 +106,7 @@ def create_gt_heatmap(coords, grid_size=100, sigma=0.05):
     heatmap = heatmap / heatmap.sum(dim=(2, 3), keepdim=True)
     return heatmap
 
+
 def create_gt_hard_heatmap(coords, grid_size=100):
     """
     Creates ground truth heatmaps with a Gaussian distribution centered at given coordinates.
@@ -120,7 +133,6 @@ def create_gt_hard_heatmap(coords, grid_size=100):
     # Use the batch_idx, time_idx, x_coords, and y_coords to set the heatmap values
     heatmap[batch_idx, time_idx, x_coords, y_coords] = 1
     return heatmap
-
 
 
 class CrossEntropyMap(nn.Module):
@@ -150,8 +162,6 @@ class CrossEntropyMap(nn.Module):
         loss_per_object=torch.nn.functional.cross_entropy(predicted_log,true_prob)
         return loss_per_object
         
-        
-
 
 class KLDivergenceLoss(nn.Module):
     def __init__(self, config):
@@ -194,3 +204,182 @@ class KLDivergenceLoss(nn.Module):
         )
         loss = loss_per_object.mean()  # Average over batch and objects
         return loss
+
+
+class PrecisionLoss(nn.Module):
+    def __init__(self, config):
+        """
+        Precision Loss for heatmaps with a discretized grid.
+
+        Args:
+            grid_size (int): Number of cells along each dimension (height, width of the heatmap).
+        """
+        super(PrecisionLoss, self).__init__()
+        self.grid_size = config.get('grid_size', 8)  # Default grid size is 8x8
+
+    def forward(self, y_hat, coords):
+        """
+        Compute Precision for heatmaps.
+
+        Args:
+            y_hat (torch.Tensor): Predicted heatmap of shape (batch_size, 1, grid_size, grid_size).
+            coords (torch.Tensor): Ground truth coordinates of shape (batch_size, 1, 2).
+
+        Returns:
+            torch.Tensor: Precision loss.
+        """
+        # Create ground truth heatmaps for the 8x8 grid
+        gt_heatmap = create_gt_hard_heatmap(coords, grid_size=self.grid_size)
+
+        # Flatten the heatmaps into (batch_size, grid_size*grid_size)
+        y_hat_flat = y_hat.view(y_hat.size(0), -1)
+        gt_flat = gt_heatmap.view(gt_heatmap.size(0), -1)  # Ground truth (binary)
+
+        # Convert predicted probabilities to binary predictions
+        y_hat_binary = torch.sigmoid(y_hat_flat)
+        y_hat_binary = torch.round(y_hat_binary)
+
+        # Calculate True Positives (TP) and False Positives (FP)
+        tp = (y_hat_binary * gt_flat).sum(dim=-1)
+        fp = ((1 - gt_flat) * y_hat_binary).sum(dim=-1)
+
+        # Precision = TP / (TP + FP)
+        precision = tp / (tp + fp + 1e-7)  # Add epsilon to prevent division by zero
+
+        precision_loss = 1 - precision.mean()  # Precision loss is 1 - precision
+        return precision_loss
+
+
+class RecallLoss(nn.Module):
+    def __init__(self, config):
+        """
+        Recall Loss for heatmaps with a discretized grid.
+
+        Args:
+            grid_size (int): Number of cells along each dimension (height, width of the heatmap).
+        """
+        super(RecallLoss, self).__init__()
+        self.grid_size = config.get('grid_size', 8)  # Default grid size is 8x8
+
+    def forward(self, y_hat, coords):
+        """
+        Compute Recall for heatmaps.
+
+        Args:
+            y_hat (torch.Tensor): Predicted heatmap of shape (batch_size, 1, grid_size, grid_size).
+            coords (torch.Tensor): Ground truth coordinates of shape (batch_size, 1, 2).
+
+        Returns:
+            torch.Tensor: Recall loss.
+        """
+        # Create ground truth heatmaps for the 8x8 grid
+        gt_heatmap = create_gt_hard_heatmap(coords, grid_size=self.grid_size)
+
+        # Flatten the heatmaps into (batch_size, grid_size*grid_size)
+        y_hat_flat = y_hat.view(y_hat.size(0), -1)
+        gt_flat = gt_heatmap.view(gt_heatmap.size(0), -1)  # Ground truth (binary)
+
+        # Convert predicted probabilities to binary predictions
+        y_hat_binary = torch.sigmoid(y_hat_flat)
+        y_hat_binary = torch.round(y_hat_binary)
+
+        # Calculate True Positives (TP) and False Negatives (FN)
+        tp = (y_hat_binary * gt_flat).sum(dim=-1)
+        fn = (gt_flat * (1 - y_hat_binary)).sum(dim=-1)
+
+        # Recall = TP / (TP + FN)
+        recall = tp / (tp + fn + 1e-7)  # Add epsilon to prevent division by zero
+
+        recall_loss = 1 - recall.mean()  # Recall loss is 1 - recall
+        return recall_loss
+
+
+class F1ScoreLoss(nn.Module):
+    def __init__(self, config):
+        """
+        F1 Score Loss for heatmaps with a discretized grid.
+
+        Args:
+            grid_size (int): Number of cells along each dimension (height, width of the heatmap).
+        """
+        super(F1ScoreLoss, self).__init__()
+        self.grid_size = config.get('grid_size', 8)  # Default grid size is 8x8
+
+    def forward(self, y_hat, coords):
+        """
+        Compute F1 Score loss for heatmaps.
+
+        Args:
+            y_hat (torch.Tensor): Predicted heatmap of shape (batch_size, 1, grid_size, grid_size).
+            coords (torch.Tensor): Ground truth coordinates of shape (batch_size, 1, 2).
+
+        Returns:
+            torch.Tensor: F1 Score loss.
+        """
+        # Create ground truth heatmaps for the 8x8 grid
+        gt_heatmap = create_gt_hard_heatmap(coords, grid_size=self.grid_size)
+
+        # Flatten the heatmaps into (batch_size, grid_size*grid_size)
+        y_hat_flat = y_hat.view(y_hat.size(0), -1) 
+        gt_flat = gt_heatmap.view(gt_heatmap.size(0), -1)  # Ground truth (binary)
+
+        # Convert predicted probabilities to binary predictions
+        y_hat_binary = torch.sigmoid(y_hat_flat)
+        y_hat_binary = torch.round(y_hat_binary)
+
+        # Calculate True Positives (TP), False Positives (FP), and False Negatives (FN)
+        tp = (y_hat_binary * gt_flat).sum(dim=-1)
+        fp = ((1 - gt_flat) * y_hat_binary).sum(dim=-1)
+        fn = (gt_flat * (1 - y_hat_binary)).sum(dim=-1)
+
+        # Calculate Precision and Recall
+        precision = tp / (tp + fp + 1e-7)
+        recall = tp / (tp + fn + 1e-7)
+
+        # Calculate F1 Score
+        f1 = 2 * (precision * recall) / (precision + recall + 1e-7)
+
+        # F1 loss is 1 - F1 Score
+        f1_loss = 1 - f1.mean()
+        return f1_loss
+
+
+class AccuracyLoss(nn.Module):
+    def __init__(self, config):
+        """
+        Accuracy Loss for heatmaps with a discretized grid.
+
+        Args:
+            grid_size (int): Number of cells along each dimension (height, width of the heatmap).
+        """
+        super(AccuracyLoss, self).__init__()
+        self.grid_size = config.get('grid_size', 8)  # Default grid size is 8x8
+
+    def forward(self, y_hat, coords):
+        """
+        Compute Accuracy for heatmaps.
+
+        Args:
+            y_hat (torch.Tensor): Predicted heatmap of shape (batch_size, 1, grid_size, grid_size).
+            coords (torch.Tensor): Ground truth coordinates of shape (batch_size, 1, 2).
+
+        Returns:
+            torch.Tensor: Accuracy loss.
+        """
+        # Create ground truth heatmaps for the 8x8 grid
+        gt_heatmap = create_gt_hard_heatmap(coords, grid_size=self.grid_size)
+
+        # Flatten the heatmaps into (batch_size, grid_size*grid_size)
+        y_hat_flat = y_hat.view(y_hat.size(0), -1) 
+        gt_flat = gt_heatmap.view(gt_heatmap.size(0), -1)  # Ground truth (binary)
+
+        # Convert predicted probabilities to binary predictions
+        y_hat_binary = torch.sigmoid(y_hat_flat)
+        y_hat_binary = torch.round(y_hat_binary)
+
+        # Accuracy = (TP + TN) / (TP + FP + TN + FN)
+        correct = (y_hat_binary == gt_flat).sum(dim=-1)
+        accuracy = correct / gt_flat.size(-1)  # Normalize by the number of grid cells
+
+        accuracy_loss = 1 - accuracy.mean()  # Accuracy loss is 1 - accuracy
+        return accuracy_loss

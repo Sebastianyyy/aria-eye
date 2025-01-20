@@ -60,7 +60,7 @@ def validation_loop(config):
     model_module = importlib.import_module(module_name)
     model = model_module.get_model(config).to(device)
 
-    #upload weights
+    # Upload weights
     weights_path = latest_weights_file_path(config)
     if not weights_path or not os.path.exists(weights_path):
         raise FileNotFoundError(f"No weights file found at {weights_path}")
@@ -74,7 +74,7 @@ def validation_loop(config):
     # Prepare the dataset for validation
     validation_set = AriaDataset(config, train=False)
 
-    #DataLoader to load batches of data
+    # DataLoader to load batches of data
     validation_loader = DataLoader(
         validation_set,
         batch_size=config["batch_size"],
@@ -82,20 +82,38 @@ def validation_loop(config):
         drop_last=False
     )
 
+    # Initialize loss functions dynamically
     loss_fn = get_loss_fn(config["loss_fn"])(config)
-    model.eval()
+    metric_fns = {
+        "mse": get_loss_fn("mse")(config),
+        "weighted_mse": get_loss_fn("weighted_mse")(config),
+        "rmse": get_loss_fn("rmse")(config),
+        "mae": get_loss_fn("mae")(config),
+        "f1": get_loss_fn("f1")(config),
+        "precision": get_loss_fn("precision")(config),
+        "recall": get_loss_fn("recall")(config),
+        "accuracy": get_loss_fn("accuracy")(config),
+    }
+    metric_fns = metric_fns - {config["loss_fn"]} # Remove the loss function from the metrics
 
     total_loss = 0.0
+    metrics = {key: 0.0 for key in metric_fns.keys()}
     num_batches = len(validation_loader)
 
+    model.eval()
     with torch.no_grad():
         batch_iterator = tqdm(validation_loader, desc="Validating")
         for step, (X, y) in enumerate(batch_iterator):
             X, y = X.to(device), y.to(device)
             y_hat = model(X)
 
+            # Compute loss
             loss = loss_fn(y_hat, y)
             total_loss += loss.item()
+
+            # Compute all metrics for reporting except the loss function
+            for metric_name, metric_fn in metric_fns.items():
+                metrics[metric_name] += metric_fn(y_hat, y).item()
 
             if config["task"] == "classification":
                 y_hat = y_hat.flatten(2)
@@ -108,7 +126,6 @@ def validation_loop(config):
                 y_hat = torch.clip(y_hat, 0, 1)
 
             # Perform visualizations if enabled
-
             if config["visualize_soft"]:
                 heatmap = generate_heatmaps(y, config['frame_grabber'])
     
@@ -133,14 +150,26 @@ def validation_loop(config):
                       step=step
                   )
 
-            batch_iterator.set_postfix({"loss": f"{loss.item():6.3f}"})
+            selected_loss = config["loss_fn"]
+            postfix = {
+                **{"loss": f"{loss.item():6.3f}"},
+                **{metric: f"{value:6.3f}" for metric, value in metrics.items()}
+            }
+            batch_iterator.set_postfix(postfix)
 
+    # Calculate average loss and metrics
     avg_loss = total_loss / num_batches
-    print(f"Validation completed. Average Loss: {avg_loss:.4f}")
-    logging.info(f"Validation completed. Average Loss: {avg_loss:.4f}")
+    avg_metrics = {metric: value / num_batches for metric, value in metrics.items()}
 
+
+    print(f"Validation completed. Average Loss: {avg_loss:6.3f}")
+    logging.info(f"Validation completed. Average Loss: {avg_loss:6.3f}")
     writer.add_scalar("Loss/validation", avg_loss)
-    
-    writer.close()
 
+    for metric, value in avg_metrics.items():
+        print(f"Validation completed. Average {metric}: {value:6.3f}")
+        logging.info(f"Validation {metric}: {value:6.3f}")
+        writer.add_scalar(f"Metrics/{metric}", value)
+    
     logging.info("Validation finished.") # Close TensorBoard writer
+    writer.close()
