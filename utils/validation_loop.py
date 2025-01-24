@@ -49,9 +49,13 @@ def validation_loop(config):
     logging.info("Starting validation")
 
     ##### Initialize TensorBoard Writer ######
-    writer = SummaryWriter(
-        log_dir=os.path.join(log_dir, "tensorboard_validation")
-    ) # Create a subdirectory for tensorboard validation logs
+    tensorboard_log_dir = os.path.join(log_dir, "tensorboard_validation")  # Create a subdirectory for tensorboard validation logs
+    writer = SummaryWriter(log_dir=tensorboard_log_dir)
+
+    # Print the TensorBoard link
+    tensorboard_url = f"http://localhost:6006/"
+    print(f"TensorBoard logs are being saved to: {tensorboard_log_dir}")
+    print(f"To view TensorBoard, run: tensorboard --logdir={tensorboard_log_dir}")
 
     ###### Upload Model ######
     
