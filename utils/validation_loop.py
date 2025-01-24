@@ -16,9 +16,9 @@ from tqdm import tqdm
 from .AriaDataset import AriaDataset
 from .config import (get_model_folder_path, get_transformations,
                      get_weights_file_path, latest_weights_file_path)
-from .get_loss_fn import get_loss_fn
+from .get_loss_fn import get_loss_fn, GridMetricLoss
 
-from utils.visualize import visualize_soft, visualize_hard, generate_heatmaps
+from utils.visualize import visualize_soft, visualize_hard
 
 def validation_loop(config):
     device = torch.device(config["device"])
@@ -60,7 +60,7 @@ def validation_loop(config):
     model_module = importlib.import_module(module_name)
     model = model_module.get_model(config).to(device)
 
-    # Upload weights
+    #upload weights
     weights_path = latest_weights_file_path(config)
     if not weights_path or not os.path.exists(weights_path):
         raise FileNotFoundError(f"No weights file found at {weights_path}")
@@ -74,7 +74,7 @@ def validation_loop(config):
     # Prepare the dataset for validation
     validation_set = AriaDataset(config, train=False)
 
-    # DataLoader to load batches of data
+    #DataLoader to load batches of data
     validation_loader = DataLoader(
         validation_set,
         batch_size=config["batch_size"],
@@ -82,38 +82,27 @@ def validation_loop(config):
         drop_last=False
     )
 
-    # Initialize loss functions dynamically
-    loss_fn = get_loss_fn(config["loss_fn"])(config)
-    metric_fns = {
-        "mse": get_loss_fn("mse")(config),
-        "weighted_mse": get_loss_fn("weighted_mse")(config),
-        "rmse": get_loss_fn("rmse")(config),
-        "mae": get_loss_fn("mae")(config),
-        "f1": get_loss_fn("f1")(config),
-        "precision": get_loss_fn("precision")(config),
-        "recall": get_loss_fn("recall")(config),
-        "accuracy": get_loss_fn("accuracy")(config),
-    }
-    metric_fns = metric_fns - {config["loss_fn"]} # Remove the loss function from the metrics
+    model.eval()
 
-    total_loss = 0.0
-    metrics = {key: 0.0 for key in metric_fns.keys()}
+    mse_loss_fn = torch.nn.MSELoss()
+    mae_loss_fn = torch.nn.L1Loss()
+    grid_metrics_loss_fn = GridMetricLoss(config)
+
+    # Initialize accumulators for each metric
+    total_rmse = 0.0
+    total_precision_loss = 0.0
+    total_recall_loss = 0.0
+    total_accuracy_loss = 0.0
+    total_fone_loss = 0.0
+    total_mae_loss = 0.0
+
     num_batches = len(validation_loader)
 
-    model.eval()
     with torch.no_grad():
         batch_iterator = tqdm(validation_loader, desc="Validating")
         for step, (X, y) in enumerate(batch_iterator):
             X, y = X.to(device), y.to(device)
             y_hat = model(X)
-
-            # Compute loss
-            loss = loss_fn(y_hat, y)
-            total_loss += loss.item()
-
-            # Compute all metrics for reporting except the loss function
-            for metric_name, metric_fn in metric_fns.items():
-                metrics[metric_name] += metric_fn(y_hat, y).item()
 
             if config["task"] == "classification":
                 y_hat = y_hat.flatten(2)
@@ -125,15 +114,31 @@ def validation_loop(config):
             if config["clip"]:
                 y_hat = torch.clip(y_hat, 0, 1)
 
+           
+            # Calculate each metric
+            rmse_loss = torch.sqrt(mse_loss_fn(y_hat, y))
+            mae_loss = mae_loss_fn(y_hat,y)
+            grid_metrics_loss = grid_metrics_loss_fn(y_hat,y)
+            precision_loss = grid_metrics_loss["precision"]
+            recall_loss = grid_metrics_loss["recall"]
+            accuracy_loss = grid_metrics_loss["accuracy"]
+            fone_loss = grid_metrics_loss["f1"]
+
+            # Accumulate metrics
+            total_rmse += rmse_loss.item()
+            total_precision_loss += precision_loss
+            total_recall_loss += recall_loss
+            total_accuracy_loss += accuracy_loss
+            total_fone_loss += fone_loss
+            total_mae_loss += mae_loss
+
             # Perform visualizations if enabled
             if config["visualize_soft"]:
-                heatmap = generate_heatmaps(y, config['frame_grabber'])
-    
-                for X_i, y_i, heatmap_i in zip(X, y, heatmap):
+                for X_i, y_i, y_hat_i in zip(X, y, y_hat):
                     visualize_soft(
                         X=X_i.cpu(),
                         y=y_i.cpu(),
-                        heatmaps=heatmap_i.cpu(),
+                        heatmaps=y_hat_i.cpu(),
                         num_frames=config['frame_grabber'],
                         writer=writer,
                         step=step
@@ -150,26 +155,39 @@ def validation_loop(config):
                       step=step
                   )
 
-            selected_loss = config["loss_fn"]
-            postfix = {
-                **{"loss": f"{loss.item():6.3f}"},
-                **{metric: f"{value:6.3f}" for metric, value in metrics.items()}
-            }
-            batch_iterator.set_postfix(postfix)
+    # Calculate averages for all metrics
+    avg_rmse = total_rmse / num_batches
+    avg_precision_loss = total_precision_loss / num_batches
+    avg_recall_loss = total_recall_loss / num_batches
+    avg_accuracy_loss = total_accuracy_loss / num_batches
+    avg_fone_loss = total_fone_loss / num_batches
+    avg_mae_loss = total_mae_loss / num_batches
 
-    # Calculate average loss and metrics
-    avg_loss = total_loss / num_batches
-    avg_metrics = {metric: value / num_batches for metric, value in metrics.items()}
+    print(f"Validation completed. Average RMSE: {avg_rmse:.4f}")
+    print(f"Validation completed. Average Precision Loss: {avg_precision_loss:.4f}")
+    print(f"Validation completed. Average Recall Loss: {avg_recall_loss:.4f}")
+    print(f"Validation completed. Average Accuracy Loss: {avg_accuracy_loss:.4f}")
+    print(f"Validation completed. Average F1 Loss:{avg_fone_loss:.4f}")
+    print(f"Validation completed. Average MAE Loss:{avg_mae_loss:.4f}")
+
+    logging.info(f"Validation completed. Average RMSE: {avg_rmse:.4f}")
+    logging.info(f"Validation completed. Average Precision Loss: {avg_precision_loss:.4f}")
+    logging.info(f"Validation completed. Average Recall Loss: {avg_recall_loss:.4f}")
+    logging.info(f"Validation completed. Average Accuracy Loss: {avg_accuracy_loss:.4f}")
+    logging.info(f"Validation completed. Average F1 Loss:{avg_fone_loss:.4f}")
+    logging.info(f"Validation completed. Average MAE Loss:{avg_mae_loss:.4f}")
 
 
-    print(f"Validation completed. Average Loss: {avg_loss:6.3f}")
-    logging.info(f"Validation completed. Average Loss: {avg_loss:6.3f}")
-    writer.add_scalar("Loss/validation", avg_loss)
+    # Log metrics to TensorBoard
+    writer.add_scalar("Metrics/validation_rmse", avg_rmse)
+    writer.add_scalar("Metrics/validation_precision_loss", avg_precision_loss)
+    writer.add_scalar("Metrics/validation_recall_loss", avg_recall_loss)
+    writer.add_scalar("Metrics/validation_accuracy_loss", avg_accuracy_loss)
+    writer.add_scalar("Metrics/validation_fone_loss", avg_fone_loss)
+    writer.add_scalar("Metrics/validation_mae_loss", avg_mae_loss)
 
-    for metric, value in avg_metrics.items():
-        print(f"Validation completed. Average {metric}: {value:6.3f}")
-        logging.info(f"Validation {metric}: {value:6.3f}")
-        writer.add_scalar(f"Metrics/{metric}", value)
-    
-    logging.info("Validation finished.") # Close TensorBoard writer
+
+
     writer.close()
+
+    logging.info("Validation finished.") # Close TensorBoard writer

@@ -16,7 +16,7 @@ def get_config():
         "task": "classification",  # (regression, classification)
         "clip": False,  # clip predicted value 0-1 (only test data)
         "batch_size": 64,  # Number of samples per batch
-        "num_epochs": 5,  # Total number of epochs for training
+        "num_epochs": 100,  # Total number of epochs for training
         "input_image_size": 224,  # Input image dimensions (square: width = height)
         "optimizer": "AdamW",  # Type of optimizer to use (e.g., Adam, SGD, AdamW)
         "lr": 0.00001,  # Learning rate for the optimizer
@@ -31,13 +31,13 @@ def get_config():
         "test_data": "data/downloads_test",  # Path to the test dataset
         "sample": 10,  # Sampling over video
         "frame_grabber": 3,  # Number of consecutive frames to grab
-        "model_name": "resnet",  # Name of the model architecture to use
-        "model_name_log": "resnet",  # Name of the model log file
+        "model_name": "resnet_optical_flow",  # Name of the model architecture to use
+        "model_name_log": "resnet_optical_flow_weighted_mse_2",  # Name of the model log file
         "model_basename": "model_",  # Base name for saving and loading model weight files
         "preload": "latest",  # Preload setting to load weights: "latest", "none", or specific point
         "dataset_path": "data/test_data",  # Path to the dataset directory
         "device": "cuda:0",  # Device to use for training and evaluation (cuda:0 or cpu)
-        "preprocess_data_path": "data/preprocess_data",  # Path to data ready to use in training
+        "preprocess_data_path": "data/full_preprocess_data",  # Path to data ready to use in training
         # RESNET PARAMS
         "model_depth": 18,  # Depth of resnet.py
         "num_of_classes": 10000,  # If not classification task set to 2
@@ -154,7 +154,7 @@ def get_config_validation():
     """
     return {
         # Task and data handling
-        "task": "classification",  # Task type (classification or regression)
+        "task": "regression",  # Task type (classification or regression)
         "clip": False,  # Clip predicted values between 0 and 1 (only for validation)
         "batch_size": 64,  # Number of samples per batch
         "input_image_size": 224,  # Input image dimensions
@@ -168,20 +168,24 @@ def get_config_validation():
 
         
         # Model parameters
-        "model_name": "resnet",  # Name of the model architecture
-        "model_name_log": "resnet",  # Name for log files
+        "model_name": "resnet_optical_flow",  # Name of the model architecture
+        "model_name_log": "resnet_optical_flow_mse",  # Name for log files
         "model_basename": "model_",  # Base name for saving/loading model weights
         "preload": "latest",  # Preload option for loading weights
         "device": "cuda:0",  # Device to use for validation (cuda or cpu)
         "model_depth": 18,  # Depth of ResNet model
-        "num_of_classes": 10000,  # Number of output classes
-        "loss_fn": "kl_loss",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
+        "num_of_classes": 2,  # Number of output classes
+        "loss_fn": "mse",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
 
       
         # Classification-specific parameters
         "shape": 100,  # Grid size for classification task
         
         # Visualization-specific parameters (for utils.visualize functions)
-        "visualize_soft": True,  # Enable or disable soft visualization
+        "visualize_soft": False,  # Enable or disable soft visualization
         "visualize_hard": False,  # Enable or disable hard visualization
+
+
+        # Metrics
+        "grid_size": 3, #grid size for f1,recal,prec
     }
