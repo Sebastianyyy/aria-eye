@@ -13,7 +13,7 @@ def get_config():
             optimizer, scheduler, and other hyperparameters.
     """
     return {
-        "task": "classification",  # (regression, classification)
+        "task": "regression",  # (regression, classification)
         "clip": False,  # clip predicted value 0-1 (only test data)
         "batch_size": 64,  # Number of samples per batch
         "num_epochs": 100,  # Total number of epochs for training
@@ -24,7 +24,7 @@ def get_config():
         "scheduler": "CosineAnnealingLR",  # Type of learning rate scheduler
         "scheduler_t_max": 10,  # Num of epochs over which to decay the learning rate for scheduler
         "scheduler_eta_min": 0.0001,  # Minimum learning rate value for the scheduler
-        "loss_fn": "kl_loss",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
+        "loss_fn": "weighted_mse",  # Loss function to use (e.g., mse, weighted_mse, kl_loss)
         "seed": 42,  # Random seed for reproducibility of experiments
         "num_workers": -1,  # Number of workers for DataLoader (-1 = use all available CPU cores)
         "train_data": "data/downloads_train",  # Path to the train dataset
@@ -32,7 +32,7 @@ def get_config():
         "sample": 10,  # Sampling over video
         "frame_grabber": 3,  # Number of consecutive frames to grab
         "model_name": "resnet_optical_flow",  # Name of the model architecture to use
-        "model_name_log": "resnet_optical_flow_weighted_mse_2",  # Name of the model log file
+        "model_name_log": "resnet_optical_flow_weighted_mse",  # Name of the model log file
         "model_basename": "model_",  # Base name for saving and loading model weight files
         "preload": "latest",  # Preload setting to load weights: "latest", "none", or specific point
         "dataset_path": "data/test_data",  # Path to the dataset directory
@@ -40,9 +40,9 @@ def get_config():
         "preprocess_data_path": "data/full_preprocess_data",  # Path to data ready to use in training
         # RESNET PARAMS
         "model_depth": 18,  # Depth of resnet.py
-        "num_of_classes": 10000,  # If not classification task set to 2
+        "num_of_classes": 2,  # If not classification task set to 2
         # CLASSIFICATION
-        "shape": 100,  # grid size
+        "shape": 100,  # grid size 
         # "d_model": 32,  # Depth of transformer model
         # "heads": 4,  # Number of heads in the transformer model
         # "enc_depth": 2,  # Depth of the encoder in the transformer model
@@ -160,10 +160,10 @@ def get_config_validation():
         "input_image_size": 224,  # Input image dimensions
         "seed": 42,  # Random seed for reproducibility
         "num_workers": -1,  # Number of workers for DataLoader (-1 = use all available CPU cores)
-        "test_data": "data/downloads_test",  # Path to the validation dataset
-        "dataset_path": "data/test_data",  # Path to the dataset directory
-        "preprocess_data_path": "data/preprocess_data",  # Path to preprocessed data
-        "sample": 10,  # Sampling over video
+        "test_data": "data/visualize_video_train",  # Path to the validation dataset
+        "dataset_path": "data/visualize_video_train",  # Path to the dataset directory
+        "preprocess_data_path": "data/preprocess_video_train",  # Path to preprocessed data
+        "sample": 1,  # Sampling over video
         "frame_grabber": 3,  # Number of consecutive frames to grab
 
         
@@ -185,7 +185,13 @@ def get_config_validation():
         "visualize_soft": False,  # Enable or disable soft visualization
         "visualize_hard": False,  # Enable or disable hard visualization
 
-
         # Metrics
         "grid_size": 3, #grid size for f1,recal,prec
+
+        # Video generation specific
+        "video_format": "mp4v", # Use 'mp4v' for MP4 or 'XVID' for AVI
+        "FPS": 16,
+        "ground_truth_color": (0, 255, 0),  # GT : Green 
+        "predicted_color": (0, 255, 255), # Pred : Yellow
+        "generate_heatmap": True,
     }
