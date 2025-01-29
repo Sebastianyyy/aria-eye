@@ -25,6 +25,14 @@ conda activate aria-eye
 
 ## Data
 ### Downloading the Dataset
+Firstly you need download a json with the dataset URLS from the original site: 
+```sh
+https://www.projectaria.com/datasets/aea/
+```
+and put it into
+```sh
+data/aria_everyday_activities_dataset_download_urls.json
+```
 Navigate to the data directory and execute the scripts to download training and test data:
 ```sh
 cd ./data
