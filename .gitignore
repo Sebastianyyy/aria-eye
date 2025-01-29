@@ -169,3 +169,6 @@ data/downloads_train
 
 # add .pt to exclude model weights
 *.pt
+
+# add logs info
+# logs/*
